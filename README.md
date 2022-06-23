@@ -15,7 +15,8 @@ pull before push to main using git pull
 https://github.com/KravitzLabDevices/CastleFeeder.git 
 ```
 push to origin using 
-``` git add . 
+``` 
+git add . 
 ```
 
 ```
