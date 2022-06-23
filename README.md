@@ -11,17 +11,18 @@ Actions and Time
 
 Commit your code:
 pull before push to main using git pull 
-'''
+```
 https://github.com/KravitzLabDevices/CastleFeeder.git 
-'''
+```
 push to origin using 
-''' git add . 
-''' 
+``` git add . 
+```
 
-''' 
+```
 git commit -m "<your commit message>" 
-'''
+```
 
-''' 
+```
 git push -f origin main 
-''' 
+```
+
