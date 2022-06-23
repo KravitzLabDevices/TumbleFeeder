@@ -24,6 +24,7 @@ git add .
 ```
 git commit -m "<your commit message>" 
 ```
+I don't know why I cannot use push -u here and have to force push. but If we pull before push it will be fine. 
 
 ```
 git push -f origin main 
