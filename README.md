@@ -10,9 +10,9 @@ Actions and Time
 
 
 Commit your code:
-pull before push to main using git pull 
+pull before push to main using 
 ```
-https://github.com/KravitzLabDevices/CastleFeeder.git 
+git pull https://github.com/KravitzLabDevices/CastleFeeder.git 
 ```
 push to origin using 
 ``` 
