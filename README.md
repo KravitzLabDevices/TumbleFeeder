@@ -10,7 +10,9 @@ Actions and Time
 
 
 Commit your code:
-pull before push to main using 
+
+
+Always pull before push to main using 
 ```
 git pull https://github.com/KravitzLabDevices/CastleFeeder.git 
 ```
