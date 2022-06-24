@@ -28,5 +28,9 @@ git commit -m "<your commit message>"
 ```
 git push -f origin main 
 ```
-or you can choose to create your own branch and commit to your branch
+or you can choose to create your own branch and commit to your branch using
+
+```
+git branch <mybranchname>
+```
 
