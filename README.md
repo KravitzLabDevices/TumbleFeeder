@@ -33,4 +33,8 @@ or you can choose to create your own branch and commit to your branch using
 ```
 git branch <mybranchname>
 ```
+and commit to your branch using
+```
+git push -f origin <mybranchname>
+```
 
