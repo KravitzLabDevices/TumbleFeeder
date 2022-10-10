@@ -77,9 +77,9 @@ void doWork() {
   if (toggle == true) {
     if (current >= next_interval) {
       //update_display();
-      LowPower.sleep(300);
-      myservo.detach();
-      digitalWrite(10,LOW);
+      //LowPower.sleep(300);
+      //myservo.detach();
+      //digitalWrite(10,LOW);
       check_inputs(middlepos, leftpos, rightpos); // put in all three position
       next_interval = current + display_interval;
       count_pos = 0;
