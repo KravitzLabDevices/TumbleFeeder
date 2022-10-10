@@ -1,6 +1,6 @@
 
- int right_b_pulse = 11; // changed from 5 and 6
- int left_b_pulse = 12;
+ int right_b_pulse = 5;
+ int left_b_pulse = 6;
 
 
 
