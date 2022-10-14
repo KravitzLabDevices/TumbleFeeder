@@ -1,8 +1,9 @@
 
- int right_b_pulse = 12; // right // 12 // 10 for device 03fa
- int left_b_pulse = 10; // left change from 12 to 10  // 11 for device 03fa
-
-
+int right_b_pulse = 12; // right // 12 // 10 for device 03fa
+int left_b_pulse = 10; // left change from 12 to 10  // 11 for device 03fa
+bool left_feed_flag = false;
+bool right_feed_flag = false;
+bool first_touch = false;
 
 void check_inputs(int middlepos, int leftpos, int rightpos) {
 
@@ -20,28 +21,28 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
     while ((qt_0.measure() - touch0base) > 50) {
       delay (1);
     }
-
+    rightPokeDur = millis() - Start;
     move_right(rightpos);
     update_display();
     rightstart = millis();
 
-//    while(millis()-rightstart<=500){
-//      digitalWrite(right_b_pulse, HIGH);
-//    }
-//    digitalWrite(right_b_pulse, LOW); 
-//
-//    
-    while ((millis() - rightstart) < opentime) { 
-      //right feeder
+    while ((millis() - rightstart) < opentime) {
+      touch2 = qt_2.measure();
+      if (((touch2 - touch2base) > 50) && first_touch == false) { // if touch left bar
+        rightstart = millis(); // restart timer
+        first_touch = true;
+      }
       Rcheckfeed();
     }
 
+    first_touch = false;
     logData();
     rightPokeDur = 0;
     rightFeederCount = 0;
     rightFeederDur = 0;
     move_center(middlepos);
   }
+
 
   //left poke
   if ((touch1 - touch1base) > 50) {
@@ -56,17 +57,17 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
     update_display();
     leftstart = millis();
 
-//    while(millis()-leftstart<=500){
-//       digitalWrite(left_b_pulse, HIGH); 
-//      }
-//    digitalWrite(left_b_pulse, LOW); 
-    
     while ((millis() - leftstart) < opentime) {
-      //left feeder
+      touch3 = qt_3.measure();
+      Serial.println(first_touch);
+      if (((touch3 - touch3base) > 50) && first_touch == false) { // if touch left bar
+        leftstart = millis(); // restart timer
+        first_touch = true;
+      }
       Lcheckfeed();
-      // update_display();
     }
 
+    first_touch = false;
     logData();
     leftPokeDur = 0;
     leftFeederCount = 0;
@@ -77,44 +78,47 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 
 
 
-void Rcheckfeed(){
-touch2 = qt_2.measure();
-if ((touch2 - touch2base) > 50) { // touch3
-  int Start = millis();
-  inputtriggered = 4;
-  rightFeederCount++;
 
-  while(millis()-Start<=250){
-    digitalWrite(right_b_pulse,HIGH); 
+void Rcheckfeed() {
+  touch2 = qt_2.measure();
+  if ((touch2 - touch2base) > 50) { // touch3
+    int Start = millis();
+    inputtriggered = 4;
+    rightFeederCount++;
+
+    while (millis() - Start <= 250) {
+      digitalWrite(right_b_pulse, HIGH);
     }
-  digitalWrite(right_b_pulse,LOW); 
-  while ((qt_2.measure() - touch2base) > 50) {
-    delay (1);
+    digitalWrite(right_b_pulse, LOW);
+    while ((qt_2.measure() - touch2base) > 50) {
+      delay (1);
     }
-  rightFeederDur = rightFeederDur + (millis() - Start);
+    rightFeederDur = rightFeederDur + (millis() - Start);
     update_display();
+    right_feed_flag = true;
   }
-  }
+}
 
 
-void Lcheckfeed(){
-touch3 = qt_3.measure();
-if ((touch3 - touch3base) > 50) { // touch3
-  int Start = millis();
-  inputtriggered = 3;
-  leftFeederCount++;
+void Lcheckfeed() {
+  touch3 = qt_3.measure();
+  if ((touch3 - touch3base) > 50) { // touch3
+    int Start = millis();
+    inputtriggered = 3;
+    leftFeederCount++;
 
-  while(millis()-Start<=250){
-    digitalWrite(left_b_pulse,HIGH); 
+    while (millis() - Start <= 250) {
+      digitalWrite(left_b_pulse, HIGH);
     }
-  digitalWrite(left_b_pulse,LOW); 
-  while ((qt_3.measure() - touch3base) > 50) {
-    delay (1);
+    digitalWrite(left_b_pulse, LOW);
+    while ((qt_3.measure() - touch3base) > 50) {
+      delay (1);
     }
-  leftFeederDur = leftFeederDur + (millis() - Start);
+    leftFeederDur = leftFeederDur + (millis() - Start);
     update_display();
+    left_feed_flag = true;
   }
-  }
+}
 
 
 void baseline_touch() {
