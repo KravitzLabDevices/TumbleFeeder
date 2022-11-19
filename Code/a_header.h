@@ -46,7 +46,7 @@ Adafruit_FreeTouch qt_3 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_50K, FRE
 /********************************************************
   Initialize variables
 ********************************************************/
-int opentime = 60000; // changed from 20s to 60s
+int opentime = 60000; // changed from 20s to 60s // from 60s to 120s
 unsigned long rightstart;
 unsigned long leftstart;
 int offset = 0;

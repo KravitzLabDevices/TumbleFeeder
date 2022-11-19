@@ -130,18 +130,18 @@ void update_display() {
   display.println(rightPokeDur);
 
   display.setCursor(0, 35);
-  display.print("Feed L: ");
+  display.print("Feed: ");
   display.print(leftFeederCount);
   display.setCursor(60, 35);
   display.print(" Dur: ");
   display.println(leftFeederDur);
 
-  display.setCursor(0, 45);
-  display.print("Feed R: ");
-  display.print(rightFeederCount);
-  display.setCursor(60, 45);
-  display.print(" Dur: ");
-  display.println(rightFeederDur);
+//  display.setCursor(0, 45);
+//  display.print("Feed R: ");
+//  display.print(rightFeederCount);
+//  display.setCursor(60, 45);
+//  display.print(" Dur: ");
+//  display.println(rightFeederDur);
 
   display.setCursor(0, 55);
   display.print("Bat V: ");

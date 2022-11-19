@@ -26,14 +26,13 @@ unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 50;
 
 boolean buttonLow = false;
-
-
+//24h * 3600s/h *1000 / 100(usual frequency)
+boolean freefeed = true;
 void setup() {
   startup();
   Serial.begin(9600);
   
 }
-
 
 /// NEED TO DEBOUNCE THE BUTTON HERE
 
@@ -41,8 +40,6 @@ int margin = 10;
 void loop() {
   doWork();
 }
-
-
 
 
 
@@ -75,15 +72,16 @@ void doWork() {
 
 
   if (toggle == true) {
-    if (current >= next_interval) {
-      //update_display();
-      //LowPower.sleep(300);
-      //myservo.detach();
-      //digitalWrite(10,LOW);
-      check_inputs(middlepos, leftpos, rightpos); // put in all three position
+    if (current >= next_interval && freefeed == false) {
+      check_inputs(middlepos, leftpos, rightpos); // put in all three position   
       next_interval = current + display_interval;
       count_pos = 0;
     }
+    if (current >= next_interval && freefeed == true){
+      free_inputs(middlepos, leftpos, rightpos);
+      next_interval = current + display_interval;
+      count_pos = 0;
+      }
   } else {
     if (count_pos % 5 == 1) { // set device #
       CSL = settting_device_num(1);
@@ -101,6 +99,5 @@ void doWork() {
       fromsd = setting_position(0);
     }
   }
-
 
 }
