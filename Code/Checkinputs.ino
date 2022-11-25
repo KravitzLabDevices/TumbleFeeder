@@ -5,7 +5,7 @@ bool left_feed_flag = false;
 bool right_feed_flag = false;
 bool first_touch = false;
 
-const unsigned long freefeed_interval = 10000; // 864000
+const unsigned long freefeed_interval = 864000; // 864000
 unsigned long next_freefeed_interval = 0;
 
 void free_inputs(int middlepos, int leftpos, int rightpos){
@@ -23,8 +23,8 @@ void free_inputs(int middlepos, int leftpos, int rightpos){
     update_display();
     logData();
     rightPokeDur = 0;
-    rightFeederCount = 0;
-    rightFeederDur = 0;
+//    rightFeederCount = 0;
+//    rightFeederDur = 0;
   }
 
   if ((touch1 - touch1base) > 50) { // L, record button press but do not turn insert 
@@ -38,8 +38,8 @@ void free_inputs(int middlepos, int leftpos, int rightpos){
     update_display();
     logData();
     leftPokeDur = 0;
-    leftFeederCount = 0;
-    leftFeederDur = 0;
+//    leftFeederCount = 0;
+//    leftFeederDur = 0;
   }
   unsigned long move_start= millis();
   while (move_start>=next_freefeed_interval){
@@ -114,25 +114,6 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
   }
 }
 
-//void Rcheckfeed() {
-//  touch2 = qt_2.measure();
-//  if ((touch2 - touch2base) > 50) { // touch3
-//    int Start = millis();
-//    inputtriggered = 4;
-//    rightFeederCount++;
-//
-//    while (millis() - Start <= 250) {
-//      digitalWrite(right_b_pulse, HIGH);
-//    }
-//    digitalWrite(right_b_pulse, LOW);
-//    while ((qt_2.measure() - touch2base) > 50) {
-//      delay (1);
-//    }
-//    rightFeederDur = rightFeederDur + (millis() - Start);
-//    update_display();
-//    right_feed_flag = true;
-//  }
-//}
 
 void Lcheckfeed() {
   touch3 = qt_3.measure();
@@ -144,16 +125,17 @@ void Lcheckfeed() {
     while (millis() - Start <= 250) {
       digitalWrite(left_b_pulse, HIGH);
     }
-    digitalWrite(left_b_pulse, LOW);
     while ((qt_3.measure() - touch3base) > 50) {
       delay (1);
     }
+    digitalWrite(left_b_pulse, LOW);
     leftFeederDur = leftFeederDur + (millis() - Start);
     update_display();
+    logData(); // added logdata here 
+    leftFeederDur = 0;
     left_feed_flag = true;
   }
 }
-
 
 void baseline_touch() {
   touch0base = qt_0.measure();

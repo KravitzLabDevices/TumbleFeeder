@@ -47,14 +47,7 @@ void WriteToSD() {
 
   logfile.print(leftFeederCount);
   logfile.print(",");
-  logfile.print(leftFeederDur);
-  logfile.print(",");
-  logfile.print(rightFeederCount);
-  logfile.print(",");
-  logfile.println(rightFeederDur);
-
-
-
+  logfile.println(leftFeederDur);
 
 
 }
@@ -81,7 +74,7 @@ void CreateFile() {
   }
 
   //write header
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,RightFeedCount,RightFeedDur");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur");
   logfile.flush();
   delay (100);
 
