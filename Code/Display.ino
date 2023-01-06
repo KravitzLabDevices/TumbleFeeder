@@ -1,9 +1,6 @@
 
 int set_pos;
-int C_lastButtonState = HIGH;
-int C_currentButtonState = HIGH;
-unsigned long C_lastDebounceTime = 0;
-unsigned long C_debounceDelay = 50;
+
 int nums = 0;
 int dnums = 0;
 
@@ -15,8 +12,13 @@ int dnums = 0;
  * from 0 to 19
 */
 
-int settting_device_num(int cur_pos) {
+int settting_device_num(int cur_pos) { // also display freefeed on screeen 
+
+touch1 = qt_1.measure(); // left
+
   display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(BLACK);
   display.setCursor(0, 0);
   display.println("now setting Device #");
   display.setCursor(0, 15);
@@ -24,21 +26,11 @@ int settting_device_num(int cur_pos) {
   display.setCursor(0, 25);
   display.print("Device: ");
   display.print(CSL);
-  display.display();
-  int C_reading = digitalRead(BUTTON_C);
-  if (C_reading != C_lastButtonState) { // start button B press timer
-    C_lastDebounceTime = millis();
-  }
-
-  if ((millis() - C_lastDebounceTime) > C_debounceDelay) {
-    if (C_reading != C_currentButtonState) {
-      C_currentButtonState = C_reading;
-      if (C_currentButtonState == LOW) {
+  display.refresh();
+  if((touch1 - touch1base) > 100){
+    delay(1500);
         dnums += 1;
       }
-    }
-  }
-  C_lastButtonState = C_reading;
   return dnums % 20;
 }
 
@@ -52,10 +44,14 @@ int settting_device_num(int cur_pos) {
  * press A to start running
 */
 int setting_position(int cur_pos) {
-  ReadBatteryLevel();
-  currentpos = analogRead(A5);
 
+touch1 = qt_1.measure(); // left
+
+  //ReadBatteryLevel();
+  //currentpos = analogRead(A5);
   display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(BLACK);
   display.setCursor(0, 0);
   display.println("Press B: switch");
   display.setCursor(0, 10);
@@ -71,28 +67,17 @@ int setting_position(int cur_pos) {
   display.print(" ");
   display.println(rightpos);
   display.setCursor(0, 55);
-  display.print("Bat V: ");
-  display.println(measuredvbat);
-  display.display();
-  int C_reading = digitalRead(BUTTON_C);
-  if (C_reading != C_lastButtonState) { // start button B press timer
-    C_lastDebounceTime = millis();
-  }
-
-  if ((millis() - C_lastDebounceTime) > C_debounceDelay) {
-    if (C_reading != C_currentButtonState) {
-      // Serial.println("C pressed2");
-      C_currentButtonState = C_reading;
-      if (C_currentButtonState == LOW) {
+  //display.print("Bat V: ");
+  //display.println(measuredvbat);
+  display.refresh();
+  if((touch1 - touch1base) > 100){
+    delay(100);
         nums += 10;
         myservo.attach(10);
         myservo.write(nums % 180);
       }
-    }
-  }
-  C_lastButtonState = C_reading;
-
   set_pos = nums % 180;
+  delay(500);
   return set_pos;
 }
 
@@ -106,9 +91,11 @@ int setting_position(int cur_pos) {
  *  time elapsed is also displayed
 */
 void update_display() {
-  ReadBatteryLevel();
+  //ReadBatteryLevel();
   currentpos = analogRead(A5);
   display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(BLACK);
   display.setCursor(0, 0);
   display.print("Pos:");
   display.print(currentpos);
@@ -136,12 +123,12 @@ void update_display() {
   display.print(" Dur: ");
   display.println(leftFeederDur);
 
-//  display.setCursor(0, 45);
-//  display.print("Feed R: ");
-//  display.print(rightFeederCount);
-//  display.setCursor(60, 45);
-//  display.print(" Dur: ");
-//  display.println(rightFeederDur);
+  display.setCursor(0, 45);
+  display.print("Feed R: ");
+  display.print(rightFeederCount);
+  display.setCursor(60, 45);
+  display.print(" Dur: ");
+  display.println(rightFeederDur);
 
   display.setCursor(0, 55);
   display.print("Bat V: ");
@@ -151,7 +138,7 @@ void update_display() {
   display.print(" ");
   display.print(CSL);
   display.print(" ");
-  display.display();
+  display.refresh();
   inputtriggered = 0;
 }
 
@@ -168,5 +155,5 @@ void DisplaySDError() {
   display.setTextSize(1);
   display.setCursor(10, 10);
   display.println("Check SD card!");
-  display.display();
+  display.refresh();
 }

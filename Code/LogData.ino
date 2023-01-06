@@ -47,9 +47,15 @@ void WriteToSD() {
 
   logfile.print(leftFeederCount);
   logfile.print(",");
-  logfile.println(leftFeederDur);
-
-
+  logfile.print(leftFeederDur);
+  logfile.print(",");
+  if (freefeed = true){
+    logfile.println(0); // freefeed
+    //logfile.print(",");
+  }else{
+    logfile.println(1); // fr1
+    //logfile.print(",");
+    }
 }
 
 
@@ -74,7 +80,7 @@ void CreateFile() {
   }
 
   //write header
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
   logfile.flush();
   delay (100);
 
@@ -122,21 +128,6 @@ void error(uint8_t errno) {
 }
 
 void getFilename(char *filename) {
-//  filename[6] = '_';
-//  filename[9] = '.';
-//  filename[10] = 'C';
-//  filename[11] = 'S';
-//  filename[12] = 'V';
-//  for (uint8_t i = 0; i < 100; i++) {
-//    filename[7] = '0' + i / 10;
-//    filename[8] = '0' + i % 10;
-//    // create if does not exist, do not open existing, write, sync after write
-//    if (! SD.exists(filename)) {
-//      break;
-//    }
-//  }
-//  return;
-
 
  DateTime now = rtc.now();
 
@@ -150,6 +141,17 @@ void getFilename(char *filename) {
   filename[15] = (now.year() - 2000) / 10 + '0';
   filename[16] = (now.year() - 2000) % 10 + '0';
   //filename[20] = '.';
+//  if (freefeed==true){
+//    filename[18] = "f";
+//    filename[19] = "r";
+//    filename[20] = "e";
+//    
+//    }else{
+//    filename[18] = "o";
+//    filename[19] = "p";
+//    filename[20] = "t";
+//    }
+  
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
     filename[19] = '0' + i % 10;
