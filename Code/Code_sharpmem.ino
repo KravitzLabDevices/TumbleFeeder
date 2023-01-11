@@ -6,17 +6,6 @@
   Setup code
 ********************************************************/
 #include "a_Header.h" //See "a_Header.h" for #defines and other constants 
-#define SHARP_SCK  5
-#define SHARP_MOSI 6
-#define SHARP_SS   9
-
-#define VBATPIN A7
-#define cardSelect 4
-
-Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
-#define BLACK 0
-#define WHITE 1
-int minorHalfSize;
 
 bool toggle = false;
 const unsigned long display_interval = 100;
@@ -28,7 +17,9 @@ int fromsd;
 int CSL;
 int count_pos = 0; // 0 initialize count_pos here for switching between l,r,m using %
 
-
+int left_touch;
+int right_touch;
+int start_touch;
 boolean buttonLow = false;
 
 boolean freefeed = false;
@@ -44,10 +35,8 @@ void setup(void) {
 
   Serial.begin(9600);
   startup();
-  Serial.println("hello");
   display.begin();
   display.clearDisplay();
-
 
 }
 
@@ -57,28 +46,29 @@ int margin = 10;
 void loop(void) {
 
   doWork();
+  LowPower.sleep();
 }
 
-
+void interrupt() {
+  // This function will be called once on device wakeup
+}
 
 void doWork() {
-  //myservo.detach();
-  //digitalWrite(10, LOW);
-  //LowPower.sleep(200);
-
   unsigned long current = millis();
 
-  touch0 = qt_0.measure(); // right
-  touch1 = qt_1.measure(); // left
-
-  if ((touch0 - touch0base) > 100) {
+  right_touch = digitalRead(A0); // RIGHT 
+  start_touch = digitalRead(A3);
+  
+  if (right_touch == 1) {
     count_pos++;
     delay(100);
   }
-  if ((touch0 - touch0base) > 50 && (touch1 - touch1base) > 50) { // button A pressed
+  if (start_touch==1) { // both pressed
     toggle = true;
     CreateFile();
+    move_center(middlepos);
     writeConfigFile();
+    update_display();
   }
 
 

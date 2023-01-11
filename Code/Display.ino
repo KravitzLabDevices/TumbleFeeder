@@ -14,10 +14,9 @@ int dnums = 0;
 
 int settting_device_num(int cur_pos) { // also display freefeed on screeen 
 
-touch1 = qt_1.measure(); // left
-
+  display.begin();
   display.clearDisplay();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(BLACK);
   display.setCursor(0, 0);
   display.println("now setting Device #");
@@ -27,8 +26,9 @@ touch1 = qt_1.measure(); // left
   display.print("Device: ");
   display.print(CSL);
   display.refresh();
-  if((touch1 - touch1base) > 100){
-    delay(1500);
+  left_touch = digitalRead(A1); // left
+  if(left_touch == 1){
+    delay(500);
         dnums += 1;
       }
   return dnums % 20;
@@ -45,9 +45,8 @@ touch1 = qt_1.measure(); // left
 */
 int setting_position(int cur_pos) {
 
-touch1 = qt_1.measure(); // left
 
-  //ReadBatteryLevel();
+  ReadBatteryLevel();
   //currentpos = analogRead(A5);
   display.clearDisplay();
   display.setTextSize(1);
@@ -67,10 +66,12 @@ touch1 = qt_1.measure(); // left
   display.print(" ");
   display.println(rightpos);
   display.setCursor(0, 55);
-  //display.print("Bat V: ");
-  //display.println(measuredvbat);
+  display.print("Bat V: ");
+  display.println(measuredvbat);
   display.refresh();
-  if((touch1 - touch1base) > 100){
+  left_touch = digitalRead(A1); // left
+
+  if( left_touch == 1){
     delay(100);
         nums += 10;
         myservo.attach(10);
@@ -91,8 +92,8 @@ touch1 = qt_1.measure(); // left
  *  time elapsed is also displayed
 */
 void update_display() {
-  //ReadBatteryLevel();
-  currentpos = analogRead(A5);
+  ReadBatteryLevel();
+  //currentpos = analogRead(A5);
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);

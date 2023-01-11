@@ -7,13 +7,14 @@ bool first_touch = false;
 bool rotating = false;
 const unsigned long freefeed_interval = 864000; // 864000
 unsigned long next_freefeed_interval = 0;
-
+int  left_result;
+int feed_touch;
 void free_inputs(int middlepos, int leftpos, int rightpos){
   
 
   while (millis()<=next_freefeed_interval){
     Lcheckfeed();
-    free_left_right_button();
+    //free_left_right_button();
     }
       move_center(middlepos);
       move_left(leftpos);
@@ -22,55 +23,18 @@ void free_inputs(int middlepos, int leftpos, int rightpos){
 }
 
 
-void free_left_right_button(){
-  touch0 = qt_0.measure();
-  touch1 = qt_1.measure();
-  if ((touch0 - touch0base) > 50) { // R, record button press but do not turn insert 
-    unsigned long Start  = millis();
-    inputtriggered = 2;
-    rightPokeCount++;
-    while ((qt_0.measure() - touch0base) > 50) {
-      delay (1);
-    }
-    rightPokeDur = millis() - Start;
-    update_display();
-    logData();
-    rightPokeDur = 0;
-  }
 
-  if ((touch1 - touch1base) > 50) { // L, record button press but do not turn insert 
-    unsigned long Start = millis();
-    inputtriggered = 1;
-    leftPokeCount++;
-    while ((qt_1.measure() - touch1base) > 50) {
-      delay (1);
-    }
-    leftPokeDur = millis() - Start;
-    update_display();
-    logData();
-    leftPokeDur = 0;
-//    leftFeederCount = 0;
-//    leftFeederDur = 0;
-  }
-  }
 
 
 void check_inputs(int middlepos, int leftpos, int rightpos) {
 
   //Check touch sensors
-  touch0 = qt_0.measure();
-  touch1 = qt_1.measure();
-
-//  Rcheckfeed();
-  //right poke
-  if ((touch0 - touch0base) > 50) {
-    Serial.println("right poke"); // yy
+  right_touch = digitalRead(A0); // RIGHT 
+  if (right_touch == 1) {
     int Start  = millis();
     inputtriggered = 2;
     rightPokeCount++;
-    while ((qt_0.measure() - touch0base) > 50) {
-      delay (1); 
-    }
+
     rightPokeDur = millis() - Start;
     update_display();
 
@@ -83,22 +47,20 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 
 
   //left poke
-  if ((touch1 - touch1base) > 50) {
+  left_touch = digitalRead(A1);
+  if (left_result==1) {
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
-    while ((qt_1.measure() - touch1base) > 50) {
-      delay (1);
-    }
+
     leftPokeDur = millis() - Start;
     move_left(leftpos);
     update_display();
     leftstart = millis();
 
     while ((millis() - leftstart) < opentime) {
-      touch3 = qt_3.measure();
-      //Serial.println(first_touch);
-      if (((touch3 - touch3base) > 50) && first_touch == false) { // if touch left bar
+      feed_touch = digitalRead(A2);
+      if (feed_touch == 1 && first_touch == false) { // if touch left bar
         leftstart = millis(); // restart timer
         first_touch = true;
       }
@@ -114,59 +76,50 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
   }
 }
 
-
-void free_checkfeed(bool rotating) {
-  if(rotating == false) {
-  touch3 = qt_3.measure();
-  if ((touch3 - touch3base) > 50) { // touch3
-    int Start = millis();
-    inputtriggered = 3;
-    leftFeederCount++;
-
-    while (millis() - Start <= 250) {
-      digitalWrite(left_b_pulse, HIGH);
-    }
-    while ((qt_3.measure() - touch3base) > 50) {
-      delay (1);
-    }
-    digitalWrite(left_b_pulse, LOW);
-    leftFeederDur = leftFeederDur + (millis() - Start);
-    update_display();
-    logData(); // added logdata here 
-    leftFeederDur = 0;
-    left_feed_flag = true;
-  }
-  }
-}
+//
+//void free_checkfeed(bool rotating) {
+//  if(rotating == false) {
+//  touch3 = qt_3.measure();
+//  if ((touch3 - touch3base) > 50) { // touch3
+//    int Start = millis();
+//    inputtriggered = 3;
+//    leftFeederCount++;
+//
+//    while (millis() - Start <= 250) {
+//      digitalWrite(left_b_pulse, HIGH);
+//    }
+//    while ((qt_3.measure() - touch3base) > 50) {
+//      delay (1);
+//    }
+//    digitalWrite(left_b_pulse, LOW);
+//    leftFeederDur = leftFeederDur + (millis() - Start);
+//    update_display();
+//    //logData(); // added logdata here 
+//    leftFeederDur = 0;
+//    left_feed_flag = true;
+//  }
+//  }
+//}
 
 
 
 
 void Lcheckfeed() {
-  touch3 = qt_3.measure();
-  if ((touch3 - touch3base) > 50) { // touch3
+  feed_touch = digitalRead(A2);
+  if (feed_touch == 1) { // touch3
     int Start = millis();
     inputtriggered = 3;
     leftFeederCount++;
 
-    while (millis() - Start <= 250) {
-      digitalWrite(left_b_pulse, HIGH);
-    }
-    while ((qt_3.measure() - touch3base) > 50) {
-      delay (1);
-    }
-    digitalWrite(left_b_pulse, LOW);
+//    while (millis() - Start <= 250) {
+//      digitalWrite(left_b_pulse, HIGH);
+//    }
+//
+//    digitalWrite(left_b_pulse, LOW);
     leftFeederDur = leftFeederDur + (millis() - Start);
     update_display();
     logData(); // added logdata here 
     leftFeederDur = 0;
     left_feed_flag = true;
   }
-}
-
-void baseline_touch() {
-  touch0base = qt_0.measure();
-  touch1base = qt_1.measure();
-  touch2base = qt_2.measure();
-  touch3base = qt_3.measure();
 }

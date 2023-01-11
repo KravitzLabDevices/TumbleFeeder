@@ -20,25 +20,26 @@ SdFat SD; //Make SdFat work with standard SD.h sketches
 /********************************************************
   Feather pins being used
 ********************************************************/
-//#define SHARP_SCK  5
-//#define SHARP_MOSI 6
-//#define SHARP_SS   9
-//
-//#define VBATPIN A7
-//#define cardSelect 4
-//
-//Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
-//#define BLACK 0
-//#define WHITE 1
-//int minorHalfSize;
+#define SHARP_SCK  5
+#define SHARP_MOSI A4
+#define SHARP_SS   6
+
+#define VBATPIN A7
+#define cardSelect 4
+
+Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
+#define BLACK 0
+#define WHITE 1
+int minorHalfSize;
+
 /********************************************************
   Set up cap touch sensing
 ********************************************************/
-Adafruit_FreeTouch qt_0 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-Adafruit_FreeTouch qt_1 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-Adafruit_FreeTouch qt_2 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-Adafruit_FreeTouch qt_3 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-
+//Adafruit_FreeTouch qt_0 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
+//Adafruit_FreeTouch qt_1 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
+//Adafruit_FreeTouch qt_2 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
+//Adafruit_FreeTouch qt_3 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
+//
 
 
 
@@ -47,7 +48,7 @@ Adafruit_FreeTouch qt_3 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_50K, FRE
 /********************************************************
   Initialize variables
 ********************************************************/
-int opentime = 60000; // changed from 20s to 60s // from 60s to 120s// to 5 mins
+int opentime = 10000; // changed from 20s to 60s // from 60s to 120s// to 5 mins
 unsigned long rightstart;
 unsigned long leftstart;
 int offset = 0;
@@ -59,14 +60,14 @@ int home_pos = 442;
 //int leftpos = 595;
 int currentpos = 0;
 
-int touch0 = 0;
-int touch1 = 0;
-int touch2 = 0;
-int touch3 = 0;
-int touch0base = 0;
-int touch1base = 0;
-int touch2base = 0;
-int touch3base = 0;
+//int touch0 = 0;
+//int touch1 = 0;
+//int touch2 = 0;
+//int touch3 = 0;
+//int touch0base = 0;
+//int touch1base = 0;
+//int touch2base = 0;
+//int touch3base = 0;
 
 int leftPokeCount = 0;
 int rightPokeCount = 0;

@@ -4,20 +4,28 @@ void startup() {
   /********************************************************
     Initialize pins
   ********************************************************/
-  //int right_b_pulse = 5;
-  //int left_b_pulse = 6;
 
 
   /*remember the left and right button for different castle fed is different*/
-  pinMode(8, OUTPUT);
-  pinMode(13, OUTPUT);
-
-  pinMode(10, OUTPUT);
-  pinMode(11, OUTPUT); // YY ADDED 12/21/22
+//  pinMode(8, OUTPUT);
+//  pinMode(13, OUTPUT);
+//
+    pinMode(10, OUTPUT);
+//  pinMode(11, OUTPUT); // YY ADDED 12/21/22
   //pinMode(A5, INPUT); // pin for current pos
   //pinMode(right_b_pulse, OUTPUT); //RIGHT SIDE PULSE
   //pinMode(left_b_pulse, OUTPUT); //LEFT SIDE PULSE
+  
+  pinMode(A0, INPUT_PULLDOWN);
+  pinMode(A1, INPUT_PULLDOWN);
+  pinMode(A2, INPUT_PULLDOWN);
+  pinMode(A3, INPUT_PULLDOWN);
 
+  LowPower.attachInterruptWakeup(A0, interrupt, CHANGE);
+  LowPower.attachInterruptWakeup(A1, interrupt, CHANGE);
+  LowPower.attachInterruptWakeup(A2, interrupt, CHANGE);
+  LowPower.attachInterruptWakeup(A3, interrupt, CHANGE);
+  
 
   // use A0 and A1 here
 
@@ -50,11 +58,11 @@ void startup() {
   /********************************************************
     start and baseline touch sensors
   ********************************************************/
-  qt_0.begin();
-  qt_1.begin();
-  qt_2.begin();
-  qt_3.begin();
-  baseline_touch();
+//  qt_0.begin();
+//  qt_1.begin();
+//  qt_2.begin();
+//  qt_3.begin();
+  //baseline_touch();
 
   /********************************************************
     Center servo
@@ -64,12 +72,8 @@ void startup() {
   /********************************************************
     Create file
   ********************************************************/
-  //CreateFile();
-  //CreatePos();
-
-//  Serial.print(leftpos);
-//  Serial.print(middlepos);
-//  Serial.println(rightpos);
+  CreateFile();
+  CreatePos();
 
 
   move_center(middlepos);
