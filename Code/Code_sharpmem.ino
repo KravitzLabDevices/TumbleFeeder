@@ -5,8 +5,7 @@
 /********************************************************
   Setup code
 ********************************************************/
-#include "a_Header.h" //See "a_Header.h" for #defines and other constants 
-
+#include "a_header.h" //See "a_Header.h" for #defines and other constants 
 bool toggle = false;
 const unsigned long display_interval = 100;
 unsigned long next_interval = 0;
@@ -46,7 +45,9 @@ int margin = 10;
 void loop(void) {
 
   doWork();
-  LowPower.sleep();
+  //update_display();
+  //LowPower.sleep();
+
 }
 
 void interrupt() {
@@ -55,11 +56,10 @@ void interrupt() {
 
 void doWork() {
   unsigned long current = millis();
-
   right_touch = digitalRead(A0); // RIGHT 
   start_touch = digitalRead(A3);
   
-  if (right_touch == 1) {
+  if (right_touch == 1) {// re-add debounce in later 
     count_pos++;
     delay(100);
   }
@@ -81,6 +81,7 @@ void doWork() {
       count_pos = 0;
     }
     if (current >= next_interval && freefeed == true) {
+      Serial.println("freefeed mode");
       free_inputs(middlepos, leftpos, rightpos);
       next_interval = current + display_interval;
       count_pos = 0;

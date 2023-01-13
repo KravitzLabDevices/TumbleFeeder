@@ -7,12 +7,13 @@ bool first_touch = false;
 bool rotating = false;
 const unsigned long freefeed_interval = 864000; // 864000
 unsigned long next_freefeed_interval = 0;
-int  left_result;
+
 int feed_touch;
 void free_inputs(int middlepos, int leftpos, int rightpos){
   
 
   while (millis()<=next_freefeed_interval){
+    //Serial.println("free");
     Lcheckfeed();
     //free_left_right_button();
     }
@@ -29,8 +30,10 @@ void free_inputs(int middlepos, int leftpos, int rightpos){
 void check_inputs(int middlepos, int leftpos, int rightpos) {
 
   //Check touch sensors
+  Serial.println("here");
   right_touch = digitalRead(A0); // RIGHT 
   if (right_touch == 1) {
+    left_touch =0;
     int Start  = millis();
     inputtriggered = 2;
     rightPokeCount++;
@@ -48,17 +51,18 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 
   //left poke
   left_touch = digitalRead(A1);
-  if (left_result==1) {
+  if (left_touch==1) {
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
 
     leftPokeDur = millis() - Start;
-    move_left(leftpos);
     update_display();
+    move_left(leftpos);
+    
     leftstart = millis();
 
-    while ((millis() - leftstart) < opentime) {
+    while ((millis() - leftstart) < 10000) {
       feed_touch = digitalRead(A2);
       if (feed_touch == 1 && first_touch == false) { // if touch left bar
         leftstart = millis(); // restart timer
@@ -105,6 +109,7 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 
 
 void Lcheckfeed() {
+  Serial.println("l check feed");
   feed_touch = digitalRead(A2);
   if (feed_touch == 1) { // touch3
     int Start = millis();

@@ -8,7 +8,7 @@ void move_left(int leftpos) {
   myservo.write(leftpos);
   }
   myservo.detach();
-  digitalWrite(10, LOW);
+  //digitalWrite(10, LOW);
 }
 
 void move_center(int middlepos) {
@@ -21,7 +21,7 @@ void move_center(int middlepos) {
   myservo.write(middlepos);              // tell servo to go to position in variable 'pos'
     }
   myservo.detach();
-  digitalWrite(10, LOW);
+  //digitalWrite(10, LOW);
 }
 
 void move_right(int rightpos) {
@@ -34,5 +34,5 @@ void move_right(int rightpos) {
   myservo.write(rightpos);
     }
   myservo.detach();
-  digitalWrite(10, LOW);
+  //digitalWrite(10, LOW);
 }

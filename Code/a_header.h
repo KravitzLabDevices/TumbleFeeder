@@ -17,8 +17,9 @@ SdFat SD; //Make SdFat work with standard SD.h sketches
 
 /*date time*/
 
+
 /********************************************************
-  Feather pins being used
+  Set up pins for the screen
 ********************************************************/
 #define SHARP_SCK  5
 #define SHARP_MOSI A4
@@ -30,17 +31,6 @@ SdFat SD; //Make SdFat work with standard SD.h sketches
 Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 #define BLACK 0
 #define WHITE 1
-int minorHalfSize;
-
-/********************************************************
-  Set up cap touch sensing
-********************************************************/
-//Adafruit_FreeTouch qt_0 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-//Adafruit_FreeTouch qt_1 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-//Adafruit_FreeTouch qt_2 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-//Adafruit_FreeTouch qt_3 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_50K, FREQ_MODE_NONE);
-//
-
 
 
 
@@ -55,19 +45,9 @@ int offset = 0;
 int tolerance = 5;
 
 // MAYBE WE COULD LET USER SET RIGHT_POS AND LEFT_POS ? 
-int home_pos = 442;
-//int rightpos = 318;
-//int leftpos = 595;
+//int home_pos = 442;
 int currentpos = 0;
 
-//int touch0 = 0;
-//int touch1 = 0;
-//int touch2 = 0;
-//int touch3 = 0;
-//int touch0base = 0;
-//int touch1base = 0;
-//int touch2base = 0;
-//int touch3base = 0;
 
 int leftPokeCount = 0;
 int rightPokeCount = 0;

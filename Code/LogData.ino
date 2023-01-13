@@ -49,21 +49,22 @@ void WriteToSD() {
   logfile.print(",");
   logfile.print(leftFeederDur);
   logfile.print(",");
-  if (freefeed = true){
+  if (freefeed == true) {
     logfile.println(0); // freefeed
     //logfile.print(",");
-  }else{
+  } else {
     logfile.println(1); // fr1
     //logfile.print(",");
-    }
+  }
 }
 
 
 // Create new file on uSD incrementing file name as required
 void CreateFile() {
   // see if the card is present and can be initialized:
-  if (!SD.begin(cardSelect, SPI_HALF_SPEED)) {
+  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
     error(2);
+    Serial.println("error 2");
   }
 
 
@@ -73,10 +74,12 @@ void CreateFile() {
   // Name filename in format F###_MMDDYYNN, where MM is month, DD is day, YY is year, and NN is an incrementing number for the number of files initialized each day
   strcpy(filename, "CASTLE_______________.CSV");  // placeholder filename len(16) // refer to force library, make to right length __ CSL007
   getFilename(filename);
+  Serial.print(filename);
   logfile = SD.open(filename, FILE_WRITE);
 
   if ( ! logfile ) {
     error(3);
+    
   }
 
   //write header
@@ -94,8 +97,9 @@ void CreateFile() {
 
 
 void CreatePos() {
-  if (!SD.begin(cardSelect, SPI_HALF_SPEED)) {
+  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
     error(2);
+    Serial.println("in create pos 2");
   }
 
   ///////////////////////////////////////////////////////////
@@ -108,8 +112,8 @@ void CreatePos() {
   int index2 = all.indexOf(" ");
   int index3 = all.lastIndexOf(" ");
   CSL = all.substring(0, index).toInt();
-  
-  leftpos = all.substring(index+1,index2).toInt();
+
+  leftpos = all.substring(index + 1, index2).toInt();
   middlepos = all.substring(index2, index3).toInt();
   rightpos = all.substring(index3).toInt();
   configfile.close();
@@ -123,13 +127,14 @@ void error(uint8_t errno) {
     uint8_t i;
     for (i = 0; i < errno; i++) {
       DisplaySDError();
+      Serial.println(errno);
     }
   }
 }
 
 void getFilename(char *filename) {
 
- DateTime now = rtc.now();
+  DateTime now = rtc.now();
 
   filename[7] = CSL / 100 + '0'; // SHOULD allow user to set the device number CSL
   filename[8] = CSL / 10 + '0';
@@ -140,18 +145,7 @@ void getFilename(char *filename) {
   filename[14] = now.day() % 10 + '0';
   filename[15] = (now.year() - 2000) / 10 + '0';
   filename[16] = (now.year() - 2000) % 10 + '0';
-  //filename[20] = '.';
-//  if (freefeed==true){
-//    filename[18] = "f";
-//    filename[19] = "r";
-//    filename[20] = "e";
-//    
-//    }else{
-//    filename[18] = "o";
-//    filename[19] = "p";
-//    filename[20] = "t";
-//    }
-  
+
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
     filename[19] = '0' + i % 10;

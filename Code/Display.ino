@@ -1,6 +1,5 @@
 
 int set_pos;
-
 int nums = 0;
 int dnums = 0;
 
@@ -13,8 +12,7 @@ int dnums = 0;
 */
 
 int settting_device_num(int cur_pos) { // also display freefeed on screeen 
-
-  display.begin();
+left_touch = digitalRead(A1); // left
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
@@ -26,11 +24,12 @@ int settting_device_num(int cur_pos) { // also display freefeed on screeen
   display.print("Device: ");
   display.print(CSL);
   display.refresh();
-  left_touch = digitalRead(A1); // left
+  
   if(left_touch == 1){
-    delay(500);
+    delay(100);
         dnums += 1;
       }
+  delay(500);
   return dnums % 20;
 }
 
@@ -45,7 +44,7 @@ int settting_device_num(int cur_pos) { // also display freefeed on screeen
 */
 int setting_position(int cur_pos) {
 
-
+  left_touch = digitalRead(A1); // left
   ReadBatteryLevel();
   //currentpos = analogRead(A5);
   display.clearDisplay();
@@ -69,8 +68,7 @@ int setting_position(int cur_pos) {
   display.print("Bat V: ");
   display.println(measuredvbat);
   display.refresh();
-  left_touch = digitalRead(A1); // left
-
+  
   if( left_touch == 1){
     delay(100);
         nums += 10;
@@ -124,12 +122,6 @@ void update_display() {
   display.print(" Dur: ");
   display.println(leftFeederDur);
 
-  display.setCursor(0, 45);
-  display.print("Feed R: ");
-  display.print(rightFeederCount);
-  display.setCursor(60, 45);
-  display.print(" Dur: ");
-  display.println(rightFeederDur);
 
   display.setCursor(0, 55);
   display.print("Bat V: ");
