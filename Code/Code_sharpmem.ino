@@ -46,7 +46,7 @@ void loop(void) {
 
   doWork();
   //update_display();
-  //LowPower.sleep();
+  LowPower.sleep();
 
 }
 
