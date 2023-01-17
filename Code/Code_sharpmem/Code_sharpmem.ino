@@ -20,7 +20,6 @@ int left_touch;
 int right_touch;
 int start_touch;
 boolean buttonLow = false;
-
 boolean freefeed = false;
 
 
@@ -31,12 +30,10 @@ boolean freefeed = false;
 
 
 void setup(void) {
-
   Serial.begin(9600);
   startup();
   display.begin();
   display.clearDisplay();
-
 }
 
 /// NEED TO DEBOUNCE THE BUTTON HERE
@@ -45,7 +42,6 @@ int margin = 10;
 void loop(void) {
 
   doWork();
-  //update_display();
   LowPower.sleep();
 
 }
@@ -54,6 +50,10 @@ void interrupt() {
   // This function will be called once on device wakeup
 }
 
+
+/********************************************************
+  check for user button touch and start the device 
+********************************************************/
 void doWork() {
   unsigned long current = millis();
   right_touch = digitalRead(A0); // RIGHT 
@@ -70,8 +70,6 @@ void doWork() {
     writeConfigFile();
     update_display();
   }
-
-
 
 
   if (toggle == true) {

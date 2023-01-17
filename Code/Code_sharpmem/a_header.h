@@ -15,9 +15,6 @@ SdFat SD; //Make SdFat work with standard SD.h sketches
 #include <Adafruit_SharpMem.h>
 
 
-/*date time*/
-
-
 /********************************************************
   Set up pins for the screen
 ********************************************************/
@@ -32,9 +29,6 @@ Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 #define BLACK 0
 #define WHITE 1
 
-
-
-
 /********************************************************
   Initialize variables
 ********************************************************/
@@ -43,12 +37,7 @@ unsigned long rightstart;
 unsigned long leftstart;
 int offset = 0;
 int tolerance = 5;
-
-// MAYBE WE COULD LET USER SET RIGHT_POS AND LEFT_POS ? 
-//int home_pos = 442;
 int currentpos = 0;
-
-
 int leftPokeCount = 0;
 int rightPokeCount = 0;
 int leftPokeDur = 0;

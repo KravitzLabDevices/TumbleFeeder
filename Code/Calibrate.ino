@@ -1,2 +1,0 @@
-void calibrate_servo () {
-}
