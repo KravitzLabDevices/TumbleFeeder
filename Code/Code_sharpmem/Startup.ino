@@ -11,7 +11,7 @@ void startup() {
   pinMode(13, OUTPUT);
   ////
   pinMode(10, OUTPUT);
-  //  pinMode(11, OUTPUT); // YY ADDED 12/21/22
+  pinMode(11, OUTPUT); // for mosfet control
   //  pinMode(A5, INPUT); // pin for current pos
   //pinMode(right_b_pulse, OUTPUT); //RIGHT SIDE PULSE
   //pinMode(left_b_pulse, OUTPUT); //LEFT SIDE PULSE
