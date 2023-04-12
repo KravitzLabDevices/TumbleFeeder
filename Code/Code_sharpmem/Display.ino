@@ -7,15 +7,15 @@ int dnums = 0;
 
 
 /********************************************************
- setting the device number of castle fed
- when device is powered on, press b once to
- go to the device setting mode. press c to 
- increment the device number. numbers range
- from 0 to 19
+  setting the device number of castle fed
+  when device is powered on, press b once to
+  go to the device setting mode. press c to
+  increment the device number. numbers range
+  from 0 to 19
 ********************************************************/
 
-int settting_device_num(int cur_pos) { // also display freefeed on screeen 
-left_touch = digitalRead(A1); // left
+int settting_device_num(int cur_pos) { // also display freefeed on screeen
+  left_touch = digitalRead(A1); // left
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
@@ -27,26 +27,24 @@ left_touch = digitalRead(A1); // left
   display.print("Device: ");
   display.print(CSL);
   display.refresh();
-  
-  if(left_touch == 1){
+
+  if (left_touch == 1) {
     delay(100);
-        dnums += 1;
-      }
+    dnums += 1;
+  }
   delay(500);
   return dnums % 20;
 }
 
 
-
-
 /********************************************************
-  setting position can set the position of left feeding space, 
-  middle block, and right feeding space. after the use finish 
-  setting the device number(pressed button B once), they can 
-  choose to directly start the program by pressing button A or 
+  setting position can set the position of left feeding space,
+  middle block, and right feeding space. after the use finish
+  setting the device number(pressed button B once), they can
+  choose to directly start the program by pressing button A or
   continue pressing button B to set position. press C to move
-  motor to the desirable pos and press b to go to the next 
-  position you want to set. after finish setting press A to 
+  motor to the desirable pos and press b to go to the next
+  position you want to set. after finish setting press A to
   start running
 ********************************************************/
 int setting_position(int cur_pos) {
@@ -75,15 +73,21 @@ int setting_position(int cur_pos) {
   display.print("Bat V: ");
   display.println(measuredvbat);
   display.refresh();
-  
-  if( left_touch == 1){
+  digitalWrite(13, HIGH); // MOSFET ON
+
+  if ( left_touch == 1) {
     delay(100);
-        nums += 10;
-        myservo.attach(10);
-        myservo.write(nums % 180);
-      }
+    nums += 10;
+    myservo.attach(10);
+    myservo.write(nums % 180);
+  }
   set_pos = nums % 180;
   delay(500);
+  if (cur_pos == 4) {
+    analog_pos = analogRead(A5);
+    *pt_middle = analog_pos;
+  }
+  digitalWrite(13, LOW);
   return set_pos;
 }
 
@@ -93,7 +97,7 @@ int setting_position(int cur_pos) {
 /********************************************************
   update display of the total number of left and right poke whenever left or right button
   is pressed. during the 20s window proceeding the button press, the function will also update
-  on the number of feeding and feeding duration. the current battery level and  
+  on the number of feeding and feeding duration. the current battery level and
   time elapsed is also displayed
 *********************************************************/
 void update_display() {

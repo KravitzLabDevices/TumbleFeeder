@@ -105,15 +105,16 @@ void CreatePos() {
   ///////////////////////////////////////////////////////////
   configfile = SD.open("CENTER.csv", FILE_WRITE); // CREATE
   configfile = SD.open("CENTER.csv", FILE_READ); //READ
+
   String all = configfile.readString();
-
-
-  int index = all.indexOf(","); // how to parse by space here using substring method?
+  //Serial.println(all);
+  int index0 = all.indexOf(",");
+  int index1 = all.lastIndexOf(",");
   int index2 = all.indexOf(" ");
   int index3 = all.lastIndexOf(" ");
-  CSL = all.substring(0, index).toInt();
-
-  leftpos = all.substring(index + 1, index2).toInt();
+  CSL = all.substring(0, index0).toInt();
+  analog_pos = all.substring(index0, index1).toInt();
+  leftpos = all.substring(index1 + 1, index2).toInt();
   middlepos = all.substring(index2, index3).toInt();
   rightpos = all.substring(index3).toInt();
   configfile.close();
@@ -123,7 +124,7 @@ void CreatePos() {
 }
 
 /********************************************************
- print out error message if fail to detect sd card 
+  print out error message if fail to detect sd card
 ********************************************************/
 void error(uint8_t errno) {
   while (1) {
@@ -136,7 +137,7 @@ void error(uint8_t errno) {
 }
 
 /********************************************************
- Generate filename base on current date and device number
+  Generate filename base on current date and device number
 ********************************************************/
 void getFilename(char *filename) {
   DateTime now = rtc.now();
@@ -165,12 +166,14 @@ void getFilename(char *filename) {
 
 
 /********************************************************
- Store the posiiton 
+  Store the posiiton
 ********************************************************/
 void writeConfigFile() {
   configfile = SD.open("CENTER.csv", FILE_WRITE);
   configfile.rewind();
   configfile.print(CSL); // YY changed
+  configfile.print(",");
+  configfile.print(*pt_middle);
   configfile.print(",");
   configfile.print(leftpos); // YY changed
   configfile.print(" ");

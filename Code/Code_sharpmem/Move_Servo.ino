@@ -1,16 +1,19 @@
 void move_left(int leftpos) {
   unsigned long left_timer = millis();
-  while (millis() - left_timer <= 1000) {
+  while (millis() - left_timer <= 5000) {
     display.clearDisplay();
     display.setCursor(0, 0);
     display.refresh();
-    digitalWrite(11, HIGH);
+    digitalWrite(13, HIGH);
     myservo.attach(10);  // attaches the servo on pin 10 to the servo object
-    myservo.write(leftpos);
+    Serial.println(middlepos);
+    for (int pos = middlepos; pos >= leftpos; pos -= 1) { 
+      myservo.write(pos);             
+      delay(50);                      
+    }
   }
   myservo.detach();
-  digitalWrite(11, LOW);
-
+  digitalWrite(13, LOW);
 }
 
 void move_center(int middlepos) {
@@ -19,12 +22,16 @@ void move_center(int middlepos) {
     display.clearDisplay();
     display.setCursor(0, 0);
     display.refresh();
-    digitalWrite(11, HIGH);
-    myservo.attach(10);  // attaches the servo on pin 9 to the servo object
-    myservo.write(middlepos);              // tell servo to go to position in variable 'pos'
+    digitalWrite(13, HIGH);
+    myservo.attach(10);
+    Serial.println(leftpos);            
+    for (int pos = leftpos; pos <= middlepos; pos += 1) { 
+      myservo.write(pos);              
+      delay(50);                     
+    }
   }
   myservo.detach();
-  digitalWrite(11, LOW);
+  digitalWrite(13, LOW);
 
 }
 
@@ -34,11 +41,11 @@ void move_right(int rightpos) {
     display.clearDisplay();
     display.setCursor(0, 0);
     display.refresh();
-    digitalWrite(11, HIGH);
+    digitalWrite(13, HIGH);
     myservo.attach(10);  // attaches the servo on pin 9 to the servo object
     myservo.write(rightpos);
   }
   myservo.detach();
-  digitalWrite(11, LOW);
+  digitalWrite(13, LOW);
 
 }
