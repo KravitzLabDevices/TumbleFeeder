@@ -8,10 +8,10 @@ void startup() {
 
   /*remember the left and right button for different castle fed is different*/
   pinMode(8, OUTPUT);
-  pinMode(13, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(13, OUTPUT); // for mosfet control
-
+  pinMode(12, OUTPUT); // for mouserat control
+  
   pinMode(A0, INPUT_PULLDOWN);
   pinMode(A1, INPUT_PULLDOWN);
   pinMode(A2, INPUT_PULLDOWN);

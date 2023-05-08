@@ -5,7 +5,7 @@ bool left_feed_flag = false;
 bool right_feed_flag = false;
 bool first_touch = false;
 bool rotating = false;
-const unsigned long freefeed_interval = 864000; // 864000
+const unsigned long freefeed_interval = 86400; // 864000
 unsigned long next_freefeed_interval = 0;
 int feed_touch;
 
@@ -17,8 +17,9 @@ int feed_touch;
 void free_inputs(int middlepos, int leftpos, int rightpos) {
   while (millis() <= next_freefeed_interval) {
     Lcheckfeed();
+
   }
-  move_center(middlepos);
+  move_center(180);
   move_left(leftpos);
   next_freefeed_interval = millis() + freefeed_interval;
 }
@@ -62,7 +63,7 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 
     
     leftstart = millis();
-    while ((millis() - leftstart) < 10000) {
+    while ((millis() - leftstart) < 30000) {
       feed_touch = digitalRead(A2);
       if (feed_touch == 1 && first_touch == false) { // if touch left bar
         leftstart = millis(); // restart timer
@@ -76,7 +77,7 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
     leftPokeDur = 0;
     leftFeederCount = 0;
     leftFeederDur = 0;
-    move_center(middlepos);
+    move_center(180);
   }
 }
 
@@ -86,13 +87,17 @@ void check_inputs(int middlepos, int leftpos, int rightpos) {
 void Lcheckfeed() {
   feed_touch = digitalRead(A2);
   if (feed_touch == 1) { // touch3
+    //Serial.println("feed");
     int Start = millis();
     inputtriggered = 3;
     leftFeederCount++;
     leftFeederDur = leftFeederDur + (millis() - Start);
+    while (millis() - Start <= 250) {
+      digitalWrite(12, HIGH); //// 
+    }
+    digitalWrite(12,LOW);
     update_display();
     logData(); // added logdata here
     leftFeederDur = 0;
-    left_feed_flag = true;
   }
 }

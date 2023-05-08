@@ -59,7 +59,7 @@ void doWork() {
       next_interval = current + display_interval;
       count_pos = 0;
     }
-    if (current >= next_interval && freefeed == true) {
+    else if (current >= next_interval && freefeed == true) {
       free_inputs(middlepos, leftpos, rightpos);
       next_interval = current + display_interval;
       count_pos = 0;

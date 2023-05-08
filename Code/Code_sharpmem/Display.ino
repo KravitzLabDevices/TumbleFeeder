@@ -88,6 +88,7 @@ int setting_position(int cur_pos) {
     *pt_middle = analog_pos;
   }
   digitalWrite(13, LOW);
+  display.refresh();
   return set_pos;
 }
 

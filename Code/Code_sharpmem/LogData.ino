@@ -108,18 +108,16 @@ void CreatePos() {
 
   String all = configfile.readString();
   //Serial.println(all);
-  int index0 = all.indexOf(",");
-  int index1 = all.lastIndexOf(",");
+  int index = all.indexOf(","); // how to parse by space here using substring method?
   int index2 = all.indexOf(" ");
   int index3 = all.lastIndexOf(" ");
-  CSL = all.substring(0, index0).toInt();
-  analog_pos = all.substring(index0, index1).toInt();
-  leftpos = all.substring(index1 + 1, index2).toInt();
+  CSL = all.substring(0, index).toInt();
+
+  leftpos = all.substring(index + 1, index2).toInt();
   middlepos = all.substring(index2, index3).toInt();
   rightpos = all.substring(index3).toInt();
   configfile.close();
   delay (50);
-
 
 }
 
@@ -172,8 +170,6 @@ void writeConfigFile() {
   configfile = SD.open("CENTER.csv", FILE_WRITE);
   configfile.rewind();
   configfile.print(CSL); // YY changed
-  configfile.print(",");
-  configfile.print(*pt_middle);
   configfile.print(",");
   configfile.print(leftpos); // YY changed
   configfile.print(" ");

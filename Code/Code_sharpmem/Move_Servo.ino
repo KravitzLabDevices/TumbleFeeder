@@ -1,13 +1,15 @@
 void move_left(int leftpos) {
   unsigned long left_timer = millis();
-  while (millis() - left_timer <= 5000) {
+  while (millis() - left_timer <= 1000) {
     display.clearDisplay();
     display.setCursor(0, 0);
     display.refresh();
     digitalWrite(13, HIGH);
     myservo.attach(10);  // attaches the servo on pin 10 to the servo object
-    Serial.println(middlepos);
-    for (int pos = middlepos; pos >= leftpos; pos -= 1) { 
+    //Serial.println(middlepos);
+    for (int pos = 180; pos >= leftpos; pos -= 1) { 
+      Serial.print("left");
+      Serial.println(pos);
       myservo.write(pos);             
       delay(50);                      
     }
@@ -24,8 +26,10 @@ void move_center(int middlepos) {
     display.refresh();
     digitalWrite(13, HIGH);
     myservo.attach(10);
-    Serial.println(leftpos);            
+    //Serial.println(leftpos);            
     for (int pos = leftpos; pos <= middlepos; pos += 1) { 
+      Serial.print("center");
+      Serial.println(pos);
       myservo.write(pos);              
       delay(50);                     
     }
