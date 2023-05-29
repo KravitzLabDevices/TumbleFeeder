@@ -3,7 +3,7 @@
   log data to csv file in sd card
 ********************************************************/
 void logData() {
-  Blink(8, 25, 2);  //blink while logging
+  //Blink(8, 25, 2);  //blink while logging
   WriteToSD();
   logfile.flush();
   delay (100);
@@ -115,7 +115,7 @@ void CreatePos() {
 
   leftpos = all.substring(index + 1, index2).toInt();
   middlepos = all.substring(index2, index3).toInt();
-  rightpos = all.substring(index3).toInt();
+  freefeed = all.substring(index3).toInt();
   configfile.close();
   delay (50);
 
@@ -148,6 +148,7 @@ void getFilename(char *filename) {
   filename[14] = now.day() % 10 + '0';
   filename[15] = (now.year() - 2000) / 10 + '0';
   filename[16] = (now.year() - 2000) % 10 + '0';
+  
 
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
@@ -175,7 +176,7 @@ void writeConfigFile() {
   configfile.print(" ");
   configfile.print(middlepos);
   configfile.print(" ");
-  configfile.println(rightpos);
+  configfile.println(freefeed);
   configfile.flush();
   configfile.close();
 } // also write the left and right pos so we don't need to calculate the angle everytime

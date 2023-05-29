@@ -12,18 +12,18 @@ void startup() {
   pinMode(13, OUTPUT); // for mosfet control
   pinMode(12, OUTPUT); // for mouserat control
   
-  pinMode(A0, INPUT_PULLDOWN);
-  pinMode(A1, INPUT_PULLDOWN);
-  pinMode(A2, INPUT_PULLDOWN);
-  pinMode(A3, INPUT_PULLDOWN);
+  pinMode(A0, INPUT_PULLUP);
+  pinMode(A1, INPUT_PULLUP);
+  pinMode(A2, INPUT_PULLUP);
 
-  pinMode(A5, INPUT_PULLDOWN);
+  pinMode(1, INPUT_PULLUP); //green button 
+  pinMode(A3, INPUT_PULLUP); // red button
+  pinMode(A5, INPUT_PULLUP); // blue button 
 
-  LowPower.attachInterruptWakeup(A0, interrupt, CHANGE);
-  LowPower.attachInterruptWakeup(A1, interrupt, CHANGE);
-  LowPower.attachInterruptWakeup(A2, interrupt, CHANGE);
+  LowPower.attachInterruptWakeup(A0, right_interrupt, FALLING);
+  LowPower.attachInterruptWakeup(A1, left_interrupt, FALLING);
+  LowPower.attachInterruptWakeup(A2, feed_interrupt, CHANGE);
   LowPower.attachInterruptWakeup(A3, interrupt, CHANGE);
-
 
   // use A0 and A1 here
 
@@ -38,11 +38,5 @@ void startup() {
   ********************************************************/
   CreateFile();
   CreatePos();
-  //
-
-  //  move_center(middlepos);
-  //
-
-
 
 }

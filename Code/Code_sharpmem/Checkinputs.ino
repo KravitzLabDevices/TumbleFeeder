@@ -1,26 +1,35 @@
 
-int right_b_pulse = 11; // right // 12 // 10 for device 03fa
-int left_b_pulse = 11; // left change from 12 to 10  // 11 for device 03fa
-bool left_feed_flag = false;
-bool right_feed_flag = false;
+
+
 bool first_touch = false;
 bool rotating = false;
 const unsigned long freefeed_interval = 86400; // 864000
 unsigned long next_freefeed_interval = 0;
-int feed_touch;
 
 
 /********************************************************
   free feeding paradigm. servo move every free_feed
   interval
 ********************************************************/
-void free_inputs(int middlepos, int leftpos, int rightpos) {
+void free_inputs(int middlepos, int leftpos) {
   while (millis() <= next_freefeed_interval) {
+    checkRight(); 
+    if (left_touch == 1) {
+      int Start  = millis();
+      inputtriggered = 1;
+      leftPokeCount++;
+      leftPokeDur = millis() - Start;
+      update_display();
+      leftPokeDur = 0;
+      leftFeederDur = 0;
+      left_touch = 0;
+      delay(250);
+    }
     Lcheckfeed();
-
   }
-  move_center(180);
+  move_center(middlepos);
   move_left(leftpos);
+  logData();
   next_freefeed_interval = millis() + freefeed_interval;
 }
 
@@ -31,73 +40,82 @@ void free_inputs(int middlepos, int leftpos, int rightpos) {
   pressed. servo move to open HFD-chamber for fr-1 feeding
   interval
 ********************************************************/
-void check_inputs(int middlepos, int leftpos, int rightpos) {
-
-  //Check touch sensors
-  right_touch = digitalRead(A0); // RIGHT
-  if (right_touch == 1) {
-    int Start  = millis();
-    inputtriggered = 2;
-    rightPokeCount++;
-
-    rightPokeDur = millis() - Start;
-    update_display();
-
-    first_touch = false;
-    logData();
-    rightPokeDur = 0;
-    rightFeederCount = 0;
-    rightFeederDur = 0;
-  }
+void check_inputs(int middlepos, int leftpos) {
+  checkRight();
+  checkLeft(middlepos, leftpos);
+  digitalWrite(LOW, A2);
+}
 
 
-  //left poke
-  left_touch = digitalRead(A1);
+
+/********************************************************
+  check whether the mice touch the left button, if so
+  chamber open for 30s. during the opening period
+  we check whether they are feeding.
+********************************************************/
+void checkLeft(int middlepos, int leftpos) {
   if (left_touch == 1) {
+    
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
     leftPokeDur = millis() - Start;
     update_display();
     move_left(leftpos);
-
-    
+    feed_touch = 0;
+    delay(2000);
     leftstart = millis();
-    while ((millis() - leftstart) < 30000) {
-      feed_touch = digitalRead(A2);
-      if (feed_touch == 1 && first_touch == false) { // if touch left bar
-        leftstart = millis(); // restart timer
-        first_touch = true;
-      }
+    while (millis() - leftstart < 30000) {
       Lcheckfeed();
     }
-
-    first_touch = false;
     logData();
     leftPokeDur = 0;
-    leftFeederCount = 0;
     leftFeederDur = 0;
-    move_center(180);
+    move_center(middlepos);
+    left_touch = 0;
   }
+
+}
+
+/********************************************************
+  check whether the mice touch the right button
+********************************************************/
+void checkRight() {
+
+  if (right_touch == 1) {
+    int Start  = millis();
+    inputtriggered = 2;
+    rightPokeCount++;
+    rightPokeDur = millis() - Start;
+    update_display();
+
+    logData();
+    rightPokeDur = 0;
+    rightFeederCount = 0;
+    rightFeederDur = 0;
+    right_touch = 0;
+    delay(250);
+  }
+
+
 }
 
 /********************************************************
   check whether mouse is touching the metal rod for feeding
 ********************************************************/
 void Lcheckfeed() {
-  feed_touch = digitalRead(A2);
   if (feed_touch == 1) { // touch3
-    //Serial.println("feed");
     int Start = millis();
     inputtriggered = 3;
     leftFeederCount++;
     leftFeederDur = leftFeederDur + (millis() - Start);
     while (millis() - Start <= 250) {
-      digitalWrite(12, HIGH); //// 
+      digitalWrite(12, HIGH); ////
     }
-    digitalWrite(12,LOW);
+    digitalWrite(12, LOW);
     update_display();
     logData(); // added logdata here
     leftFeederDur = 0;
+    feed_touch = 0;
   }
 }
