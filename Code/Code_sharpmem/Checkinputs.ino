@@ -1,6 +1,4 @@
 
-
-
 bool first_touch = false;
 bool rotating = false;
 const unsigned long freefeed_interval = 86400; // 864000
@@ -63,7 +61,7 @@ void checkLeft(int middlepos, int leftpos) {
     update_display();
     move_left(leftpos);
     feed_touch = 0;
-    delay(2000);
+    
     leftstart = millis();
     while (millis() - leftstart < 30000) {
       Lcheckfeed();

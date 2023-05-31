@@ -19,6 +19,7 @@ int settting_device_num(int cur_pos) { // also display freefeed on screeen
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.println("now setting Device #");
   display.setCursor(5, 20);
@@ -45,6 +46,7 @@ int set_feed_paradigm() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.println("now setting feed paradigm ");
   display.setCursor(0, 20);
@@ -80,6 +82,7 @@ int setting_position(int cur_pos) {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
+  display.setRotation(1);
 
   display.drawRect(5, 5, 135, 35, BLACK);
   display.setCursor(20, 20);
@@ -142,6 +145,7 @@ void update_display() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.print("Pos:");
   display.print(currentpos);
@@ -187,6 +191,7 @@ void DisplaySDError() {
   delay (25);
   display.clearDisplay();
   display.setTextSize(1);
+  display.setRotation(1);
   display.setCursor(10, 10);
   display.println("Check SD card!");
   display.refresh();
@@ -195,6 +200,7 @@ void DisplaySDError() {
 
 
 void display_mouse() {
+  display.setRotation(1);
   for (int i = -50; i < 200; i += 15) {
     display.fillRoundRect (i + 25, 82, 15, 10, 6, BLACK);    //head
     display.fillRoundRect (i + 22, 80, 8, 5, 3, BLACK);      //ear
