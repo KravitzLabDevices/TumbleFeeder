@@ -27,6 +27,7 @@ void free_inputs(int middlepos, int leftpos) {
   }
   move_center(middlepos);
   move_left(leftpos);
+  leftFeederCount--;
   logData();
   next_freefeed_interval = millis() + freefeed_interval;
 }
