@@ -1,16 +1,12 @@
 
 bool first_touch = false;
 bool rotating = false;
-const unsigned long freefeed_interval = 86400; // 864000
-unsigned long next_freefeed_interval = 0;
-
 
 /********************************************************
   free feeding paradigm. servo move every free_feed
   interval
 ********************************************************/
 void free_inputs(int middlepos, int leftpos) {
-  while (millis() <= next_freefeed_interval) {
     checkRight(); 
     if (left_touch == 1) {
       int Start  = millis();
@@ -24,12 +20,7 @@ void free_inputs(int middlepos, int leftpos) {
       delay(250);
     }
     Lcheckfeed();
-  }
-  move_center(middlepos);
-  move_left(leftpos);
-  leftFeederCount--;
-  logData();
-  next_freefeed_interval = millis() + freefeed_interval;
+
 }
 
 

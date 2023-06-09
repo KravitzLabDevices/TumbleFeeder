@@ -25,6 +25,7 @@ boolean buttonLow = false;
 boolean freefeed;
 int analog_pos;
 int *pt_middle = &analog_pos;
+unsigned int wake_counter = 0;
 /*****************************************************************
      Set up screen
  *****************************************************************/
@@ -44,6 +45,7 @@ void loop() {
   }
   doWork();
   LowPower.sleep(5000);
+  wake_counter++;
 
 }
 
@@ -75,6 +77,12 @@ void doWork() {
     count_pos = 0;
   }
   else if (current >= next_interval && freefeed == true) {
+    if (wake_counter % 180 == 0) {
+      move_center(middlepos);
+      move_left(leftpos);
+      //leftFeederCount--;
+      logData();
+    }
     free_inputs(middlepos, leftpos);
     next_interval = current + display_interval;
     count_pos = 0;
