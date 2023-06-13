@@ -46,7 +46,6 @@ void loop() {
   doWork();
   LowPower.sleep(5000);
   wake_counter++;
-
 }
 
 void left_interrupt() {
@@ -62,7 +61,6 @@ void feed_interrupt() {
 }
 
 void interrupt() {
-  //
 }
 
 
@@ -80,7 +78,7 @@ void doWork() {
     if (wake_counter % 180 == 0) {
       move_center(middlepos);
       move_left(leftpos);
-      //leftFeederCount--;
+      leftFeederCount--;
       logData();
     }
     free_inputs(middlepos, leftpos);

@@ -2,25 +2,27 @@
 bool first_touch = false;
 bool rotating = false;
 
+
+
 /********************************************************
   free feeding paradigm. servo move every free_feed
   interval
 ********************************************************/
 void free_inputs(int middlepos, int leftpos) {
-    checkRight(); 
-    if (left_touch == 1) {
-      int Start  = millis();
-      inputtriggered = 1;
-      leftPokeCount++;
-      leftPokeDur = millis() - Start;
-      update_display();
-      leftPokeDur = 0;
-      leftFeederDur = 0;
-      left_touch = 0;
-      delay(250);
-    }
-    Lcheckfeed();
 
+  checkRight();
+  if (left_touch == 1) {
+    int Start  = millis();
+    inputtriggered = 1;
+    leftPokeCount++;
+    leftPokeDur = millis() - Start;
+    update_display();
+    leftPokeDur = 0;
+    leftFeederDur = 0;
+    left_touch = 0;
+    delay(250);
+  }
+  Lcheckfeed();
 }
 
 
@@ -45,7 +47,7 @@ void check_inputs(int middlepos, int leftpos) {
 ********************************************************/
 void checkLeft(int middlepos, int leftpos) {
   if (left_touch == 1) {
-    
+
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
@@ -53,7 +55,7 @@ void checkLeft(int middlepos, int leftpos) {
     update_display();
     move_left(leftpos);
     feed_touch = 0;
-    
+
     leftstart = millis();
     while (millis() - leftstart < 30000) {
       Lcheckfeed();

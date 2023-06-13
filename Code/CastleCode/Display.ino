@@ -15,11 +15,11 @@ int fnums = 0;
 ********************************************************/
 
 int settting_device_num(int cur_pos) { // also display freefeed on screeen
-  int blue_touch = digitalRead(A1); // left
+  int blue_touch = digitalRead(A5); // left
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
-  //display.setRotation(1);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.println("now setting Device #");
   display.setCursor(5, 20);
@@ -29,7 +29,7 @@ int settting_device_num(int cur_pos) { // also display freefeed on screeen
   display.print(CSL);
   display.refresh();
 
-  if (blue_touch == 1) {
+  if (blue_touch == 0) {
     delay(100);
     dnums += 1;
   }
@@ -42,11 +42,11 @@ int settting_device_num(int cur_pos) { // also display freefeed on screeen
 
 
 int set_feed_paradigm() {
-  int blue_touch = digitalRead(A1); // left
+  int blue_touch = digitalRead(A5); // left
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
-  //display.setRotation(1);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.println("now setting feed paradigm ");
   display.setCursor(0, 20);
@@ -56,7 +56,7 @@ int set_feed_paradigm() {
   display.print(fnums);
   display.refresh();
 
-  if (blue_touch == 1) {
+  if (blue_touch == 0) {
     delay(100);
     fnums = -(fnums - 1);
   }
@@ -77,12 +77,12 @@ int set_feed_paradigm() {
 ********************************************************/
 int setting_position(int cur_pos) {
 
-  int blue_touch = digitalRead(A1); // left
+  int blue_touch = digitalRead(A5); // left
   ReadBatteryLevel();
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
-  //display.setRotation(1);
+  display.setRotation(1);
 
   display.drawRect(5, 5, 135, 35, BLACK);
   display.setCursor(20, 20);
@@ -113,7 +113,7 @@ int setting_position(int cur_pos) {
   display.refresh();
   digitalWrite(13, HIGH); // MOSFET ON
 
-  if (blue_touch == 1) {
+  if (blue_touch == 0) {
     delay(100);
     nums += 10;
     myservo.attach(10);
@@ -145,7 +145,7 @@ void update_display() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(BLACK);
-  //display.setRotation(1);
+  display.setRotation(1);
   display.setCursor(5, 5);
   display.print("Pos:");
   display.print(currentpos);
@@ -200,7 +200,7 @@ void DisplaySDError() {
 
 
 void display_mouse() {
-  //display.setRotation(1);
+  display.setRotation(1);
   for (int i = -50; i < 200; i += 15) {
     display.fillRoundRect (i + 25, 82, 15, 10, 6, BLACK);    //head
     display.fillRoundRect (i + 22, 80, 8, 5, 3, BLACK);      //ear

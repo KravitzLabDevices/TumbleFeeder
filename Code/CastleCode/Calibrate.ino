@@ -1,13 +1,13 @@
 
 void calibrate_servo () {
-  int green_touch = digitalRead(A0); // RIGHT
+  int green_touch = digitalRead(1); 
   int red_touch = digitalRead(A3);
   
-  if (green_touch == 1) {// re-add debounce in later
+  if (green_touch == 0) {
     count_pos++;
     delay(100);
   }
-  if (red_touch == 1) {  
+  if (red_touch == 0) {  
     toggle = true;
     CreateFile();
     display_mouse();

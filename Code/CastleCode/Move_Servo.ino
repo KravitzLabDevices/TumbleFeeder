@@ -4,7 +4,7 @@ void move_left(int leftpos) {
   display.setCursor(0, 0);
   display.refresh();
   digitalWrite(13, HIGH);
-  myservo.attach(10);  // attaches the servo on pin 10 to the servo object
+  myservo.attach(10); 
   for (int pos = middlepos; pos >= leftpos; pos -= 1) {
     myservo.write(pos);
     delay(50);
