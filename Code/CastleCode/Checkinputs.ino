@@ -1,9 +1,4 @@
 
-bool first_touch = false;
-bool rotating = false;
-
-
-
 /********************************************************
   free feeding paradigm. servo move every free_feed
   interval
@@ -32,10 +27,9 @@ void free_inputs(int middlepos, int leftpos) {
   pressed. servo move to open HFD-chamber for fr-1 feeding
   interval
 ********************************************************/
-void check_inputs(int middlepos, int leftpos) {
+void check_inputs(int middlepos, int leftpos, unsigned long open_interval) {
   checkRight();
-  checkLeft(middlepos, leftpos);
-  digitalWrite(LOW, A2);
+  checkLeft(middlepos, leftpos, open_interval);
 }
 
 
@@ -45,7 +39,7 @@ void check_inputs(int middlepos, int leftpos) {
   chamber open for 30s. during the opening period
   we check whether they are feeding.
 ********************************************************/
-void checkLeft(int middlepos, int leftpos) {
+void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
   if (left_touch == 1) {
 
     int Start = millis();
@@ -57,16 +51,17 @@ void checkLeft(int middlepos, int leftpos) {
     feed_touch = 0;
 
     leftstart = millis();
-    while (millis() - leftstart < 30000) {
+    while (millis() - leftstart < open_interval) {
       Lcheckfeed();
     }
     logData();
     leftPokeDur = 0;
     leftFeederDur = 0;
     move_center(middlepos);
+    
     left_touch = 0;
+    shake();
   }
-
 }
 
 /********************************************************

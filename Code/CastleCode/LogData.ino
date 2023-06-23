@@ -108,14 +108,22 @@ void CreatePos() {
 
   String all = configfile.readString();
   //Serial.println(all);
-  int index = all.indexOf(","); // how to parse by space here using substring method?
-  int index2 = all.indexOf(" ");
-  int index3 = all.lastIndexOf(" ");
-  CSL = all.substring(0, index).toInt();
+  int index = all.indexOf(" "); // how to parse by space here using substring method?
+  int index2 = all.indexOf(" ", index + 1);
+  int index3 = all.indexOf(" ", index2 + 1);
+  int index4 = all.indexOf(" ", index3 + 1);
+  int index5 = all.indexOf(" ", index4 + 1);
+  int index6 = all.indexOf(" ", index5 + 1);
 
-  leftpos = all.substring(index + 1, index2).toInt();
-  middlepos = all.substring(index2, index3).toInt();
-  freefeed = all.substring(index3).toInt();
+  
+  freefeed = all.substring(0, index).toInt();
+  open_interval = all.substring(index + 1, index2).toInt();
+  CSL = all.substring(index2, index3).toInt();  
+  on_hour = all.substring(index3, index4).toInt();  
+  off_hour = all.substring(index4, index5).toInt();  
+  leftpos = all.substring(index5, index6).toInt();
+  middlepos = all.substring(index6).toInt();
+
   configfile.close();
   delay (50);
 
@@ -148,7 +156,7 @@ void getFilename(char *filename) {
   filename[14] = now.day() % 10 + '0';
   filename[15] = (now.year() - 2000) / 10 + '0';
   filename[16] = (now.year() - 2000) % 10 + '0';
-  
+
 
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
@@ -170,13 +178,19 @@ void getFilename(char *filename) {
 void writeConfigFile() {
   configfile = SD.open("CENTER.csv", FILE_WRITE);
   configfile.rewind();
-  configfile.print(CSL); // YY changed
-  configfile.print(",");
-  configfile.print(leftpos); // YY changed
+  configfile.print(freefeed); 
   configfile.print(" ");
-  configfile.print(middlepos);
+  configfile.print(open_interval); 
   configfile.print(" ");
-  configfile.println(freefeed);
+  configfile.print(CSL);
+  configfile.print(" ");
+  configfile.print(on_hour);
+  configfile.print(" ");
+  configfile.print(off_hour);
+  configfile.print(" ");
+  configfile.print(leftpos);
+  configfile.print(" ");
+  configfile.println(middlepos);
   configfile.flush();
   configfile.close();
 } // also write the left and right pos so we don't need to calculate the angle everytime

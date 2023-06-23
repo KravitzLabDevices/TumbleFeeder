@@ -1,34 +1,40 @@
 
 void calibrate_servo () {
   int green_touch = digitalRead(1); 
-  int red_touch = digitalRead(A3);
+  int blue_touch = digitalRead(A5);
   
   if (green_touch == 0) {
+    count_pos--;
+    delay(100);
+  }
+  if (blue_touch == 0) {  
     count_pos++;
     delay(100);
   }
-  if (red_touch == 0) {  
-    toggle = true;
-    CreateFile();
-    display_mouse();
-    writeConfigFile();
-    update_display();
-  }
 
 
-  if (count_pos % 5 == 1) { // set feed paradigm
+  if (count_pos % 8 == 1) { // set feed paradigm
     freefeed = set_feed_paradigm();
   }
-  else if (count_pos % 5 == 2) { // set open
+  else if (count_pos % 8 == 2) { // set open
     leftpos = setting_position(2);
   }
-  else if (count_pos % 5 == 3) { // set close
+  else if (count_pos % 8 == 3) { // set close
     middlepos = setting_position(3);
   }
-  else if (count_pos % 5 == 4) { //set device #
+  else if (count_pos % 8 == 4) { //set device #
      CSL = settting_device_num(4);
   }
+  else if(count_pos % 8 == 5){ // set open interval
+    open_interval = setting_open_interval();
+  }
+  else if(count_pos % 8 == 6){ // set on/off time for freefeed mode
+    on_hour = setting_on_hour();
+  }
+  else if(count_pos % 8 == 7){ // set on/off time for freefeed mode
+    off_hour = setting_off_hour();
+  }
   else { // =0 // default device # and defualt pos
-    fromsd = setting_position(0);
+    display_current_params(0);
   }
 }

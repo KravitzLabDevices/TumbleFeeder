@@ -16,16 +16,22 @@ int leftpos ;
 int fromsd;
 int CSL;
 int count_pos = 0; // 0 initialize count_pos here for switching between l,r,m using %
-
+unsigned long open_interval;
 int left_touch;
 int right_touch;
 int start_touch;
 int feed_touch;
 boolean buttonLow = false;
 boolean freefeed;
-int analog_pos;
-int *pt_middle = &analog_pos;
 unsigned int wake_counter = 0;
+// allow user to set open and off hour during the freefeed mode
+
+int on_hour;
+int off_hour;
+boolean OverNight = (off_hour - on_hour) > 0 ? 0 : 1;
+
+boolean open_now = true;
+
 /*****************************************************************
      Set up screen
  *****************************************************************/
@@ -67,23 +73,44 @@ void interrupt() {
 /********************************************************
   check for user button touch and start the device
 ********************************************************/
-void doWork() {
+void doWork() { // change to case switch
   unsigned long current = millis();
   if (current >= next_interval && freefeed == false) {
-    check_inputs(middlepos, leftpos); // put in all three position
+    check_inputs(middlepos, leftpos, open_interval); // put in all three position
     next_interval = current + display_interval;
-    count_pos = 0;
   }
   else if (current >= next_interval && freefeed == true) {
-    if (wake_counter % 180 == 0) {
-      move_center(middlepos);
-      move_left(leftpos);
-      leftFeederCount--;
-      logData();
+    /////////////////////////////////////////////////////////////
+    DateTime t = rtc.now();
+    if (OverNight)
+    {
+      if (t.hour() >= on_hour || t.hour() <= off_hour) {
+        free_inputs(middlepos, leftpos);
+        next_interval = current + display_interval;
+      } else {
+        if (open_now == true) {
+          move_center(middlepos);
+          open_now = false;
+        }
+      }
     }
-    free_inputs(middlepos, leftpos);
-    next_interval = current + display_interval;
-    count_pos = 0;
+    else {
+      if (t.hour() >= on_hour && t.hour() <= off_hour) {
+        free_inputs(middlepos, leftpos);
+        next_interval = current + display_interval;
+      }
+    }
+
+    /////////////////////////////////////////////////////////////
+
   }
 
+}
+
+void shake_food() {
+  shake ();
+  move_center(middlepos);
+  move_left(leftpos);
+  leftFeederCount--;
+  logData();
 }
