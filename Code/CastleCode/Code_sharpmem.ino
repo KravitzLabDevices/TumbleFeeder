@@ -28,7 +28,6 @@ unsigned int wake_counter = 0;
 
 int on_hour;
 int off_hour;
-boolean OverNight = (off_hour - on_hour) > 0 ? 0 : 1;
 
 boolean open_now = true;
 
@@ -42,6 +41,7 @@ void setup() {
   display.begin();
   display.clearDisplay();
 
+
 }
 
 int margin = 10;
@@ -49,8 +49,10 @@ void loop() {
   while (!toggle) {
     calibrate_servo();
   }
+
+
   doWork();
-  LowPower.sleep(5000);
+  //LowPower.sleep(5000);
   wake_counter++;
 }
 
@@ -73,39 +75,49 @@ void interrupt() {
 /********************************************************
   check for user button touch and start the device
 ********************************************************/
-void doWork() { // change to case switch
+void doWork() {
+  boolean active_flag = set_active();
+  // change to case switch
   unsigned long current = millis();
   if (current >= next_interval && freefeed == false) {
     check_inputs(middlepos, leftpos, open_interval); // put in all three position
     next_interval = current + display_interval;
   }
-  else if (current >= next_interval && freefeed == true) {
-    /////////////////////////////////////////////////////////////
-    DateTime t = rtc.now();
-    if (OverNight)
-    {
-      if (t.hour() >= on_hour || t.hour() <= off_hour) {
-        free_inputs(middlepos, leftpos);
-        next_interval = current + display_interval;
-      } else {
-        if (open_now == true) {
-          move_center(middlepos);
-          open_now = false;
-        }
-      }
-    }
-    else {
-      if (t.hour() >= on_hour && t.hour() <= off_hour) {
-        free_inputs(middlepos, leftpos);
-        next_interval = current + display_interval;
-      }
-    }
+  else if (current >= next_interval && freefeed == true && active_flag) {
 
-    /////////////////////////////////////////////////////////////
+    free_inputs(middlepos, leftpos);
+    next_interval = current + display_interval;
+    if (wake_counter % 150 == 0) {
+      shake_food();
+    }
 
   }
-
 }
+
+/////////////////////////////////////////////////////////////
+boolean set_active() {
+  DateTime t = rtc.now();
+  Serial.println(t.hour());
+  if ((off_hour - on_hour) < 0)
+  {
+    if (t.hour() >= on_hour || t.hour() <= off_hour) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  else {
+    Serial.println("not overnight");
+    if (t.hour() >= on_hour && t.hour() <= off_hour) {
+      Serial.println("active");
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+
 
 void shake_food() {
   shake ();

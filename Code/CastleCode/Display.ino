@@ -351,6 +351,18 @@ void update_display() {
   display.setCursor(5, 80);
   display.print("free feed?: ");
   display.print(freefeed);
+  if (freefeed) {
+    display.setCursor(5, 95);
+    display.print("On hour: ");
+    display.print(on_hour);
+    display.print("  Off hour: ");
+    display.print(off_hour);
+  }
+  display.setCursor(5, 110);
+  display.print("current time (h): ");
+  display.print(rtc.now().hour());
+  display.print(" : ");
+  display.print(rtc.now().minute());
   display.refresh();
   inputtriggered = 0;
 }
