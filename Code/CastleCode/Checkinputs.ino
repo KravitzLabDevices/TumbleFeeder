@@ -53,6 +53,7 @@ void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
     leftstart = millis();
     while (millis() - leftstart < open_interval) {
       Lcheckfeed();
+      //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.      
     }
     logData();
     leftPokeDur = 0;
