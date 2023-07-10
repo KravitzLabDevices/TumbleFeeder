@@ -52,7 +52,7 @@ void loop() {
 
 
   doWork();
-  //LowPower.sleep(5000);
+  LowPower.sleep(5000);
   wake_counter++;
 }
 
@@ -87,10 +87,15 @@ void doWork() {
 
     free_inputs(middlepos, leftpos);
     next_interval = current + display_interval;
-    if (wake_counter % 150 == 0) {
+    if (wake_counter % 180 == 0) {
       shake_food();
     }
-
+    else if (current >= next_interval && freefeed == true && !active_flag) {
+      if (wake_counter % 180 == 0) {
+        shake_food();
+        move_center(middlepos);
+      }
+    }
   }
 }
 
@@ -100,7 +105,7 @@ boolean set_active() {
   Serial.println(t.hour());
   if ((off_hour - on_hour) < 0)
   {
-    if (t.hour() >= on_hour || t.hour() <= off_hour) {
+    if (t.hour() >= on_hour || t.hour() < off_hour) {
       return true;
     } else {
       return false;
@@ -108,7 +113,7 @@ boolean set_active() {
   }
   else {
     Serial.println("not overnight");
-    if (t.hour() >= on_hour && t.hour() <= off_hour) {
+    if (t.hour() >= on_hour && t.hour() < off_hour) {
       Serial.println("active");
       return true;
     } else {

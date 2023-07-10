@@ -221,7 +221,7 @@ int setting_off_hour() {
     off_nums += 1;
   }
   delay(500);
-  return (off_nums % 24) ;
+  return (off_nums % 25) ;
 
 }
 
