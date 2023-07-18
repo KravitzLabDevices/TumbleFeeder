@@ -48,6 +48,7 @@ int leftFeederDur = 0;
 int rightFeederDur = 0;
 int inputtriggered = 0;
 float measuredvbat;
+//bool pulseAvailable = true;
 
 /********************************************************
   Initialize servo

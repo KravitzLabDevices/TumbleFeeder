@@ -42,6 +42,10 @@ void check_inputs(int middlepos, int leftpos, unsigned long open_interval) {
 void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
   if (left_touch == 1) {
 
+    digitalWrite (11, HIGH);
+    delay (100);
+    digitalWrite (11, LOW);
+
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
@@ -53,13 +57,13 @@ void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
     leftstart = millis();
     while (millis() - leftstart < open_interval) {
       Lcheckfeed();
-      //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.      
+      //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
     }
     logData();
     leftPokeDur = 0;
     leftFeederDur = 0;
     move_center(middlepos);
-    
+
     left_touch = 0;
     shake();
   }
@@ -84,8 +88,6 @@ void checkRight() {
     right_touch = 0;
     delay(250);
   }
-
-
 }
 
 /********************************************************
