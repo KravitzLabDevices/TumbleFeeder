@@ -414,6 +414,5 @@ void display_mouse() {
     display.refresh();
     delay (80);
     display.fillRect (i - 25, 73, 95, 33, WHITE);
-
   }
 }
