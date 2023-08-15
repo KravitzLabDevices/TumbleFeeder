@@ -1,10 +1,8 @@
 //INCLUDE LIBRARIES
 #include <Servo.h>
 #include <Wire.h>
-//#include <RTCZero.h>
 #include "RTClib.h"
 #include "ArduinoLowPower.h"
-//#include <sleep.h>
 #include <SPI.h>
 #include <SdFat.h>
 SdFat SD; //Make SdFat work with standard SD.h sketches
@@ -14,17 +12,18 @@ SdFat SD; //Make SdFat work with standard SD.h sketches
 #include "Adafruit_FreeTouch.h"
 #include <Adafruit_SharpMem.h>
 
-
 /********************************************************
   Set up pins for the screen
 ********************************************************/
 #define SHARP_SCK  5
 #define SHARP_MOSI A4
 #define SHARP_SS   6
-
 #define VBATPIN A7
 #define cardSelect 4
 
+/********************************************************
+  Set up screen
+********************************************************/
 Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 #define BLACK 0
 #define WHITE 1
@@ -48,7 +47,27 @@ int leftFeederDur = 0;
 int rightFeederDur = 0;
 int inputtriggered = 0;
 float measuredvbat;
-//bool pulseAvailable = true;
+
+bool SessionStarted = false;
+const unsigned long display_interval = 100;
+unsigned long next_interval = 0;
+int middlepos ;
+int leftpos ;
+int fromsd;
+int CSL;
+int count_pos = 0; // 0 initialize count_pos here for switching between l,r,m using %
+unsigned long open_interval;
+int left_touch;
+int right_touch;
+int start_touch;
+int feed_touch;
+boolean buttonLow = false;
+boolean freefeed;
+unsigned int wake_counter = 0;
+int on_hour;
+int off_hour;
+boolean open_now = true;
+int margin = 10;
 
 /********************************************************
   Initialize servo
@@ -58,8 +77,6 @@ Servo myservo;
 /********************************************************
   Initialize RTC
 ********************************************************/
-
-//RTCZero rtc;
 RTC_DS3231 rtc; 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 

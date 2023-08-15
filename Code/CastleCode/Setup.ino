@@ -1,13 +1,15 @@
-
-void calibrate_servo () {
+void Setup () {
   int green_touch = digitalRead(1);
   int blue_touch = digitalRead(A5);
 
   if (green_touch == 0) {
+    display.refresh();
     count_pos--;
     delay(100);
   }
+
   if (blue_touch == 0) {
+    display.refresh();
     count_pos++;
     delay(100);
   }
@@ -15,9 +17,11 @@ void calibrate_servo () {
   if (count_pos < 0) {
     count_pos = 7;
   }
+
   else if (count_pos == 0) { // =0 // default device # and defualt pos
     display_current_params(0);
   }
+
   else if (count_pos == 1) { // set feed paradigm
     freefeed = set_feed_paradigm();
   }

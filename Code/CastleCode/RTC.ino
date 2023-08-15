@@ -1,4 +1,3 @@
-
 void dateTime(uint16_t* date, uint16_t* time) {
   DateTime rnow = rtc.now();
   // return date using FAT_DATE macro to format fields

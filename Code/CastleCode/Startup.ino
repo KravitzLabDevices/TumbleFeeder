@@ -2,7 +2,6 @@ void startup() {
   /********************************************************
     Initialize pins
   ********************************************************/
-
   pinMode(8, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(11, OUTPUT);  // output for pulse
@@ -23,11 +22,9 @@ void startup() {
   LowPower.attachInterruptWakeup(A2, feed_interrupt, CHANGE);
   LowPower.attachInterruptWakeup(A3, interrupt, CHANGE);
 
-
   /********************************************************
     Initialize RTC
   ********************************************************/
-
   rtc.begin(); // initialize RTC
 
   /********************************************************
@@ -35,5 +32,4 @@ void startup() {
   ********************************************************/
   CreateFile();
   CreatePos();
-
 }

@@ -1,4 +1,3 @@
-
 /********************************************************
   log data to csv file in sd card
 ********************************************************/
@@ -63,8 +62,6 @@ void WriteToSD() {
   }
 }
 
-
-
 /********************************************************
   create new sd file everytime when castle fed is started
   the filename include the current datetime
@@ -89,9 +86,7 @@ void CreateFile() {
   logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
   logfile.flush();
   delay (100);
-
 }
-
 
 /********************************************************
   Read servo position from the csv file stored in the sd
@@ -114,8 +109,6 @@ void CreatePos() {
   int index4 = all.indexOf(" ", index3 + 1);
   int index5 = all.indexOf(" ", index4 + 1);
   int index6 = all.indexOf(" ", index5 + 1);
-
-  
   freefeed = all.substring(0, index).toInt();
   open_interval = all.substring(index + 1, index2).toInt();
   CSL = all.substring(index2, index3).toInt();  
@@ -123,7 +116,6 @@ void CreatePos() {
   off_hour = all.substring(index4, index5).toInt();  
   leftpos = all.substring(index5, index6).toInt();
   middlepos = all.substring(index6).toInt();
-
   configfile.close();
   delay (50);
 
@@ -156,21 +148,15 @@ void getFilename(char *filename) {
   filename[14] = now.day() % 10 + '0';
   filename[15] = (now.year() - 2000) / 10 + '0';
   filename[16] = (now.year() - 2000) % 10 + '0';
-
-
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
     filename[19] = '0' + i % 10;
-
     if (! SD.exists(filename)) {
       break;
     }
   }
   return;
 }
-
-
-
 
 /********************************************************
   Store the posiiton
@@ -193,4 +179,4 @@ void writeConfigFile() {
   configfile.println(middlepos);
   configfile.flush();
   configfile.close();
-} // also write the left and right pos so we don't need to calculate the angle everytime
+} 

@@ -1,5 +1,4 @@
 void move_left(int leftpos) {
-
   display.clearDisplay();
   display.setCursor(0, 0);
   display.refresh();
@@ -9,13 +8,11 @@ void move_left(int leftpos) {
     myservo.write(pos);
     delay(50);
   }
-
   myservo.detach();
   digitalWrite(13, LOW);
 }
 
 void move_center(int middlepos) {
-
   display.clearDisplay();
   display.setCursor(0, 0);
   display.refresh();
@@ -25,7 +22,6 @@ void move_center(int middlepos) {
     myservo.write(pos);
     delay(50);
   }
-
   myservo.detach();
   digitalWrite(13, LOW);
 }
