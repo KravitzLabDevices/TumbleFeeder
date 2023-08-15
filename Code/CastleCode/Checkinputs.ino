@@ -42,10 +42,6 @@ void check_inputs(int middlepos, int leftpos, unsigned long open_interval) {
 void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
   if (left_touch == 1) {
 
-    digitalWrite (11, HIGH);
-    delay (100);
-    digitalWrite (11, LOW);
-
     int Start = millis();
     inputtriggered = 1;
     leftPokeCount++;
@@ -98,6 +94,14 @@ void Lcheckfeed() {
     int Start = millis();
     inputtriggered = 3;
     leftFeederCount++;
+
+
+    //send a pulse to trigger Bonsai for video recording
+    digitalWrite (11, HIGH);
+    delay (100);
+    digitalWrite (11, LOW);
+    delay (30000);
+
     leftFeederDur = leftFeederDur + (millis() - Start);
     while (millis() - Start <= 250) {
       digitalWrite(12, HIGH); ////
