@@ -7,12 +7,12 @@
      Set up device
  *****************************************************************/
 #include "a_header.h" //See "a_Header.h" for #defines and other constants 
+
 void setup() {
   Serial.begin(9600);
   startup();
   display.begin();
-  display.clearDisplay();  
-  display_current_params(0);
+  display.fillRect(0, 0, 168, 144, WHITE);  
   while (!SessionStarted) {
     Setup();
   }
@@ -24,6 +24,7 @@ void setup() {
 void loop() {
   doWork();
   LowPower.sleep(5000);
+  update_display();
   wake_counter++;
 }
 
@@ -35,12 +36,12 @@ void doWork() {
   // change to case switch
   unsigned long current = millis();
   if (current >= next_interval && freefeed == false) {
-    check_inputs(middlepos, leftpos, open_interval); // put in all three position
+    check_inputs(closedpos, openpos, open_duration); // put in all three position
     next_interval = current + display_interval;
   }
   else if (current >= next_interval && freefeed == true && active_flag) {
 
-    free_inputs(middlepos, leftpos);
+    free_inputs(closedpos, openpos);
     next_interval = current + display_interval;
     if (wake_counter % 180 == 0) {
       shake_food();
@@ -48,7 +49,7 @@ void doWork() {
     else if (current >= next_interval && freefeed == true && !active_flag) {
       if (wake_counter % 180 == 0) {
         shake_food();
-        move_center(middlepos);
+        move_center(closedpos);
       }
     }
   }

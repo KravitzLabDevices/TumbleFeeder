@@ -1,105 +1,195 @@
 int set_pos;
 int nums = 0;
 int dnums = 0;
-int fnums = 0;
+bool mode = 0;
 int onums = 0;
 int on_nums = 0;
 int off_nums = 0;
 
+void display_current_params() {
+  read_buttons();
+  ReadBatteryLevel();
+  display.fillRect(0, 0, 168, 144, WHITE);
+  display.setTextSize(1);
+  display.setTextColor(BLACK);
+  display.setRotation(1);
+  display.fillRect(0, 0, 168, 144, WHITE);
+  display.drawRect(5, 5, 156, 35, BLACK);
+  display.setCursor(40, 20);
+  display.println("Castle Feeder!");
+  display.setCursor(5, 45);
+  display.println("Blue: Edit settings");
+  display.setCursor(5, 60);
+  display.println("Red: Start device");
+  display.drawRect (5, 75, 156, 15, BLACK);
+  display.setCursor(20, 80);
+  display.println("Current settings: ");
+  display.setCursor(5, 95);
+  display.print("Open: ");
+  display.print(openpos);
+  display.setCursor(70, 95);
+  display.print("Close: ");
+  display.print(closedpos);
+  display.setCursor(5, 110);
+  display.print("Device#: ");
+  display.print(CSL);
+  display.setCursor(80, 110);
+  display.print("Mode: ");
+  mode == 1 ? display.print("Free") : display.print("FR1");
+  display.setCursor(5, 125);
+  display.print("Open duration: ");
+  display.print(open_duration);
+  display.refresh();
+
+  if (red_touch == 0) {
+    display.refresh();
+    SessionStarted = true;
+    CreateFile();
+    display_mouse();
+    writeConfigFile();
+    update_display();
+  }
+
+  if (blue_touch == 0) {
+    set_feed_paradigm();
+  }
+
+  if (green_touch == 0) {
+  }
+}
+
+void set_feed_paradigm() {
+  endstate = false;
+  read_buttons();
+  display.fillRect(0, 0, 168, 144, WHITE);
+  display.drawRect(5, 5, 156, 35, BLACK);
+  display.setCursor(20, 20);
+  display.println("Mode");
+  display.setCursor(5, 45);
+  display.println("Green: Home");
+  display.setCursor(5, 60);
+  display.println("Blue: Next menu");
+  display.setCursor(5, 75);
+  display.println("Red: Change mode");
+  display.setCursor(5, 90);
+  display.print("Feed mode: ");
+  mode == 1 ? display.print("Free") : display.print("FR1");
+  display.refresh();
+
+  //change mode
+  if (red_touch == 0) {
+    if (mode == 0) {
+      mode = 1;
+    }
+    else {
+      mode = 0;
+    }
+    delay(100);
+  }
+
+  if (blue_touch == 0) {
+    endstate = true;
+    setting_device_num();
+  }
+
+  if (green_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
+  if (endstate == false) set_feed_paradigm();
+}
+
 /********************************************************
   setting the device number of castle fed
   when device is powered on, press b once to
-  go to the device setting mode. press c to
-  increment the device number. numbers range
+  go to the device setting mode. numbers range
   from 0 to 19
 ********************************************************/
 
-int settting_device_num(int cur_pos) { // also display freefeed on screeen
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
-
+void setting_device_num() {
+  endstate = false;
+  starttime = millis();
+  read_buttons();
+  display.fillRect(0, 0, 168, 144, WHITE);
   display.drawRect(5, 5, 156, 35, BLACK);
   display.setCursor(20, 20);
-  display.println("MENU: Device #");
-
+  display.println("Device #");
   display.setCursor(5, 45);
-  display.println("Green Button : next menu");
-
+  display.println("Green: Home");
   display.setCursor(5, 60);
-  display.println("Blue Button : change params");
+  display.println("Blue: Next menu");
   display.setCursor(5, 75);
+  display.println("Red: Increase Device #");
+  display.setCursor(5, 90);
   display.print("Device: ");
   display.print(CSL);
+  display.refresh();
 
   if (red_touch == 0) {
-    display.refresh();
-    delay(100);
-    dnums += 1;
+    CSL++;
+    if (CSL > 9) CSL = 0;
+    delay(200);
   }
-  delay(200);
-  return dnums % 20;
+
+  if (blue_touch == 0) {
+    endstate = true;
+    setting_open_duration();
+  }
+
+  if (green_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
+  if (endstate == false) setting_device_num();
 }
 
-unsigned long setting_open_interval() {
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
+void setting_open_duration() {
+  endstate = false;
+  read_buttons();
+  display.fillRect(0, 0, 168, 144, WHITE);
   display.drawRect(5, 5, 156, 35, BLACK);
   display.setCursor(20, 20);
-  display.println("MENU: Open Interval");
+  display.println("Open Duration");
 
   display.setCursor(5, 45);
-  display.println("Green Button : next menu");
-
+  display.println("Green: Home");
   display.setCursor(5, 60);
-  display.println("Blue Button : change params");
+  display.println("Blue: Next menu");
   display.setCursor(5, 75);
-  display.print("time(s): ");
-  display.print(open_interval);
-  //  display.refresh();
+  display.println("Red: Increase Open Duration");
+  display.setCursor(5, 90);
+  display.println("Open Duration:");
+  display.setCursor(5, 105);
+  display.print(open_duration);
+  display.print("s");
+  display.refresh();
 
   if (red_touch == 0) {
     display.refresh();
-    delay(100);
-    onums += 10;
+    delay(200);
+    open_duration += 10;
+    if (open_duration > 120) open_duration = 10;
   }
-  delay(200);
 
-  return (onums % 180) * 1000;
-}
-
-int set_feed_paradigm() {
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
-  display.drawRect(5, 5, 156, 35, BLACK);
-  display.setCursor(20, 20);
-  display.println("MENU: Feed Paradigm");
-  display.setCursor(5, 45);
-  display.println("Green Button : next menu");
-  display.setCursor(5, 60);
-  display.println("Blue Button : change params");
-  display.setCursor(5, 75);
-  display.print("feed mode: ");
-  fnums == 1 ? display.print("free feed") : display.print("FR 1");
-  //  display.refresh();
-  if (red_touch == 0) {
-    display.refresh();
-    delay(100);
-    fnums = -(fnums - 1);
+  if (blue_touch == 0) {
+    endstate = true;
+    digitalWrite(13, HIGH);
+    myservo.attach(10);
+    myservo.write(openpos);
+    delay(300);
+    digitalWrite(13, LOW);
+    setting_open_position();
   }
-  delay(200);
 
-  return fnums;
+  if (green_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
+  if (endstate == false)  setting_open_duration();
 }
-
 
 /********************************************************
   setting position can set the position of left feeding space,
@@ -111,141 +201,140 @@ int set_feed_paradigm() {
   position you want to set. after finish setting press A to
   start running
 ********************************************************/
-int setting_position(int cur_pos) {
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
+void setting_open_position() {
+  endstate = false;
+
+  read_buttons();
+  display.fillRect(0, 0, 168, 144, WHITE);
   display.drawRect(5, 5, 156, 35, BLACK);
   display.setCursor(20, 20);
-  display.println("MENU: Motor Position");
+  display.println("Open Position");
   display.setCursor(5, 45);
-  display.println("Green Button : next menu");
+  display.println("Green: Home");
   display.setCursor(5, 60);
-  display.println("Blue Button : change params");
-  display.setCursor(5, 95);
+  display.println("Blue: Next menu");
+  display.setCursor(5, 75);
+  display.println("Red: Increase Open Pos");
+  display.setCursor(5, 90);
   display.print("Open: ");
-  display.print(leftpos);
-  display.setCursor(70, 95);
-  display.print("Close: ");
-  display.print(middlepos);
-  //  display.refresh();
+  display.print(openpos);
+  display.refresh();
   digitalWrite(13, HIGH);
 
   if (red_touch == 0) {
     display.refresh();
-    delay(100);
-    nums += 10;
+    openpos += 5;
     myservo.attach(10);
-    myservo.write(nums % 180);
+    myservo.write(openpos);
+    delay(300);
+    if (openpos > 160) openpos = 0;
   }
-  set_pos = nums % 180;
-  delay(200);
+
+  if (blue_touch == 0) {
+    endstate = true;
+    digitalWrite(13, HIGH);
+    myservo.attach(10);
+    myservo.write(closedpos);
+    delay(300);
+    digitalWrite(13, LOW);
+    setting_closed_position();
+  }
+
+  if (green_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
   digitalWrite(13, LOW);
-  //  display.refresh();
-  return set_pos;
+  if (endstate == false)  setting_open_position();
 }
 
-int setting_on_hour() {
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
-  display.drawRect(5, 5, 156, 35, BLACK);
-  display.setCursor(20, 20);
-  display.println("MENU: On Hour");
+void setting_closed_position() {
+  endstate = false;
 
-
-  display.setCursor(5, 45);
-  display.println("Green Button : next menu");
-
-  display.setCursor(5, 60);
-  display.println("Blue Button : change params");
-  display.setCursor(5, 75);
-  display.print("On Hour: ");
-  display.print(on_hour);
-  //  display.refresh();
-  if (red_touch == 0) {
-    display.refresh();
-    delay(100);
-    on_nums += 1;
-  }
-  delay(200);
-  return (on_nums % 24) ;
-
-}
-
-int setting_off_hour() {
-  int red_touch = digitalRead(A3); // left
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
-  display.drawRect(5, 5, 156, 35, BLACK);
-  display.setCursor(20, 20);
-  display.println("MENU: Off Hour");
-  display.setCursor(5, 45);
-  display.println("Green Button : next menu");
-  display.setCursor(5, 60);
-  display.println("Blue Button : change params");
-  display.setCursor(5, 75);
-  display.print("Off Hour: ");
-  display.print(off_hour);
-  if (red_touch == 0) {
-    display.refresh();
-    delay(100);
-    off_nums += 1;
-  }
-  delay(200);
-  return (off_nums % 25) ;
-}
-
-void display_current_params(int cur_pos) {
-  int red_touch = digitalRead(A3);
-  ReadBatteryLevel();
-
-  //clear display
+  read_buttons();
   display.fillRect(0, 0, 168, 144, WHITE);
-  
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
   display.drawRect(5, 5, 156, 35, BLACK);
   display.setCursor(20, 20);
-  display.println("Button Instruction");
+  display.println("Closed Position");
   display.setCursor(5, 45);
-  display.println("Press Green: set params");
+  display.println("Green: Home");
   display.setCursor(5, 60);
-  display.println("Press Red: start device");
-  display.drawRect (5, 75, 156, 15, BLACK);
-  display.setCursor(20, 80);
-  display.println("Current params values: ");
-  display.setCursor(5, 95);
-  display.print("Open: ");
-  display.print(leftpos);
-  display.setCursor(70, 95);
-  display.print("Close: ");
-  display.print(middlepos);
-  display.setCursor(5, 110);
-  display.print("Device #: ");
-  display.print(CSL);
-  display.setCursor(80, 110);
-  display.print("Mode: ");
-  freefeed == 1 ? display.print("freefeed") : display.print("FR 1");
-  display.setCursor(5, 125);
-  display.print("FR open interval: ");
-  display.print(open_interval);
+  display.println("Blue: Next menu");
+  display.setCursor(5, 75);
+  display.println("Red: Increase Closed Pos");
+  display.setCursor(5, 90);
+  display.print("Closed: ");
+  display.print(closedpos);
+  display.refresh();
+  digitalWrite(13, HIGH);
+
   if (red_touch == 0) {
     display.refresh();
-    SessionStarted = true;
-    CreateFile();
-    display_mouse();
-    writeConfigFile();
-    update_display();
+    closedpos += 5;
+    myservo.attach(10);
+    myservo.write(closedpos);
+    delay(300);
+    if (closedpos > 160) closedpos = 0;
   }
-  //  delay(1000);
+
+  if (blue_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
+  if (green_touch == 0) {
+    endstate = true;
+    display_current_params();
+  }
+
+  digitalWrite(13, LOW);
+  if (endstate == false)  setting_closed_position();
+}
+
+void setting_on_hour() {
+  //  read_buttons();
+  //  display.fillRect(0, 0, 168, 144, WHITE);
+  //  display.drawRect(5, 5, 156, 35, BLACK);
+  //  display.setCursor(20, 20);
+  //  display.println("On Hour");
+  //
+  //  display.setCursor(5, 45);
+  //  display.println("Green Button : next menu");
+  //
+  //  display.setCursor(5, 60);
+  //  display.println("Blue Button : change params");
+  //  display.setCursor(5, 75);
+  //  display.print("On Hour: ");
+  //  display.print(on_hour);
+  //  //  display.refresh();
+  //  if (red_touch == 0) {
+  //    display.refresh();
+  //    delay(100);
+  //    on_nums += 1;
+  //  }
+  //  return (on_nums % 24) ;
+}
+
+void setting_off_hour() {
+  //  read_buttons();
+  //  display.fillRect(0, 0, 168, 144, WHITE);
+  //  display.drawRect(5, 5, 156, 35, BLACK);
+  //  display.setCursor(20, 20);
+  //  display.println("Off Hour");
+  //  display.setCursor(5, 45);
+  //  display.println("Green Button : next menu");
+  //  display.setCursor(5, 60);
+  //  display.println("Blue Button : change params");
+  //  display.setCursor(5, 75);
+  //  display.print("Off Hour: ");
+  //  display.print(off_hour);
+  //  if (red_touch == 0) {
+  //    display.refresh();
+  //    delay(100);
+  //    off_nums += 1;
+  //  }
+  //  return (off_nums % 25) ;
 }
 
 /********************************************************
@@ -256,11 +345,7 @@ void display_current_params(int cur_pos) {
 *********************************************************/
 void update_display() {
   ReadBatteryLevel();
-  //currentpos = analogRead(A5);
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setRotation(1);
+  display.fillRect(0, 0, 168, 144, WHITE);
   display.setCursor(5, 5);
   display.print("Pos:");
   display.print(currentpos);
@@ -316,7 +401,7 @@ void DisplaySDError() {
   delay (25);
   Blink (8, 50, 3);
   delay (25);
-  display.clearDisplay();
+  display.fillRect(0, 0, 168, 144, WHITE);
   display.setTextSize(1);
   display.setRotation(1);
   display.setCursor(10, 10);
@@ -324,6 +409,9 @@ void DisplaySDError() {
   display.refresh();
 }
 
+/********************************************************
+  Mouse animation
+********************************************************/
 void display_mouse() {
   display.setRotation(1);
   for (int i = -50; i < 200; i += 15) {

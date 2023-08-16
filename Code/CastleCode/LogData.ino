@@ -109,16 +109,15 @@ void CreatePos() {
   int index4 = all.indexOf(" ", index3 + 1);
   int index5 = all.indexOf(" ", index4 + 1);
   int index6 = all.indexOf(" ", index5 + 1);
-  freefeed = all.substring(0, index).toInt();
-  open_interval = all.substring(index + 1, index2).toInt();
+  mode = all.substring(0, index).toInt();
+  open_duration = all.substring(index + 1, index2).toInt();
   CSL = all.substring(index2, index3).toInt();  
   on_hour = all.substring(index3, index4).toInt();  
   off_hour = all.substring(index4, index5).toInt();  
-  leftpos = all.substring(index5, index6).toInt();
-  middlepos = all.substring(index6).toInt();
+  openpos = all.substring(index5, index6).toInt();
+  closedpos = all.substring(index6).toInt();
   configfile.close();
   delay (50);
-
 }
 
 /********************************************************
@@ -166,7 +165,7 @@ void writeConfigFile() {
   configfile.rewind();
   configfile.print(freefeed); 
   configfile.print(" ");
-  configfile.print(open_interval); 
+  configfile.print(open_duration); 
   configfile.print(" ");
   configfile.print(CSL);
   configfile.print(" ");
@@ -174,9 +173,9 @@ void writeConfigFile() {
   configfile.print(" ");
   configfile.print(off_hour);
   configfile.print(" ");
-  configfile.print(leftpos);
+  configfile.print(openpos);
   configfile.print(" ");
-  configfile.println(middlepos);
+  configfile.println(closedpos);
   configfile.flush();
   configfile.close();
 } 

@@ -9,8 +9,8 @@ void shake () {
 
 void shake_food() {
   shake ();
-  move_center(middlepos);
-  move_left(leftpos);
+  move_center(closedpos);
+  move_left(openpos);
   leftFeederCount--;
   logData();
 }

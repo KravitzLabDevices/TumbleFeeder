@@ -31,7 +31,6 @@ Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 /********************************************************
   Initialize variables
 ********************************************************/
-int opentime = 10000; // changed from 20s to 60s // from 60s to 120s// to 5 mins
 unsigned long rightstart;
 unsigned long leftstart;
 int offset = 0;
@@ -47,16 +46,18 @@ int leftFeederDur = 0;
 int rightFeederDur = 0;
 int inputtriggered = 0;
 float measuredvbat;
+unsigned long starttime;
+bool endstate = false;
 
 bool SessionStarted = false;
 const unsigned long display_interval = 100;
 unsigned long next_interval = 0;
-int middlepos ;
-int leftpos ;
+int closedpos = 150;
+int openpos = 0;
 int fromsd;
 int CSL;
-int count_pos = 0; // 0 initialize count_pos here for switching between l,r,m using %
-unsigned long open_interval;
+int count_pos = 0;
+unsigned long open_duration;
 int left_touch;
 int right_touch;
 int start_touch;
@@ -69,6 +70,10 @@ int off_hour;
 boolean open_now = true;
 int margin = 10;
 
+bool red_touch = digitalRead(A3);
+bool green_touch = digitalRead(1);
+bool blue_touch = digitalRead(A5);
+
 /********************************************************
   Initialize servo
 ********************************************************/
@@ -77,7 +82,7 @@ Servo myservo;
 /********************************************************
   Initialize RTC
 ********************************************************/
-RTC_DS3231 rtc; 
+RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 /********************************************************

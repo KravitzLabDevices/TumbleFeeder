@@ -1,9 +1,14 @@
+void read_buttons() {
+  red_touch = digitalRead(A3);
+  green_touch = digitalRead(1);
+  blue_touch = digitalRead(A5);
+}
 
 /********************************************************
   free feeding paradigm. servo move every free_feed
   interval
 ********************************************************/
-void free_inputs(int middlepos, int leftpos) {
+void free_inputs(int closedpos, int openpos) {
 
   checkRight();
   if (left_touch == 1) {
@@ -20,26 +25,19 @@ void free_inputs(int middlepos, int leftpos) {
   Lcheckfeed();
 }
 
-
-
-/********************************************************
-  fr-1 feeding paradigm. servo move when the left button is
-  pressed. servo move to open HFD-chamber for fr-1 feeding
-  interval
-********************************************************/
-void check_inputs(int middlepos, int leftpos, unsigned long open_interval) {
+void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
   checkRight();
-  checkLeft(middlepos, leftpos, open_interval);
+  checkLeft(closedpos, openpos, open_duration);
 }
 
 
 
 /********************************************************
   check whether the mice touch the left button, if so
-  chamber open for 30s. during the opening period
+  chamber open. during the opening period
   we check whether they are feeding.
 ********************************************************/
-void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
+void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
   if (left_touch == 1) {
 
     int Start = millis();
@@ -47,18 +45,18 @@ void checkLeft(int middlepos, int leftpos, unsigned long open_interval) {
     leftPokeCount++;
     leftPokeDur = millis() - Start;
     update_display();
-    move_left(leftpos);
+    move_left(openpos);
     feed_touch = 0;
 
     leftstart = millis();
-    while (millis() - leftstart < open_interval) {
+    while (millis() - leftstart < (open_duration * 1000)) {
       Lcheckfeed();
       //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
     }
     logData();
     leftPokeDur = 0;
     leftFeederDur = 0;
-    move_center(middlepos);
+    move_center(closedpos);
 
     left_touch = 0;
     shake();
