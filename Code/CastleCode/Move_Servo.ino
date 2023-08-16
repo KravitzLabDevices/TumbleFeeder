@@ -1,5 +1,5 @@
 void move_left(int openpos) {
-  display.fillRect(0, 0, 168, 144, WHITE);
+//  display.fillRect(0, 0, 168, 144, WHITE);
   display.setCursor(0, 0);
   display.refresh();
   digitalWrite(13, HIGH);
@@ -13,7 +13,7 @@ void move_left(int openpos) {
 }
 
 void move_center(int closedpos) {
-  display.fillRect(0, 0, 168, 144, WHITE);
+//  display.fillRect(0, 0, 168, 144, WHITE);
   display.setCursor(0, 0);
   display.refresh();
   digitalWrite(13, HIGH);
