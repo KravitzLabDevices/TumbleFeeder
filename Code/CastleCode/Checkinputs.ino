@@ -9,7 +9,6 @@ void read_buttons() {
   interval
 ********************************************************/
 void free_inputs(int closedpos, int openpos) {
-
   checkRight();
   if (left_touch == 1) {
     int Start  = millis();
@@ -28,6 +27,7 @@ void free_inputs(int closedpos, int openpos) {
 void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
   checkRight();
   checkLeft(closedpos, openpos, open_duration);
+  Lcheckfeed();
 }
 
 
@@ -49,10 +49,17 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     feed_touch = 0;
 
     leftstart = millis();
+    Serial.println("Code 1");
     while (millis() - leftstart < (open_duration * 1000)) {
+      if (digitalRead(A2) == LOW)   {
+        feed_touch = 1;
+      }
+      Serial.println("Code 2");
       Lcheckfeed();
+      update_display();
       //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
     }
+
     logData();
     leftPokeDur = 0;
     leftFeederDur = 0;
@@ -88,17 +95,22 @@ void checkRight() {
   check whether mouse is touching the metal rod for feeding
 ********************************************************/
 void Lcheckfeed() {
+
   if (feed_touch == 1) { // touch3
+    Serial.println("Code 3");
     int Start = millis();
     inputtriggered = 3;
     leftFeederCount++;
-
-
-    //send a pulse to trigger Bonsai for video recording
-    digitalWrite (11, HIGH);
-    delay (100);
-    digitalWrite (11, LOW);
-    delay (30000);
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///// THIS NEXT CODE IS FOR TAKING TRIGGERED VIDEOS WITH BONSAI, IF YOU'RE NOT DOING THAT LEAVE IT COMMENTED OUT!
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    //send a pulse to trigger Bonsai for video recording
+//    digitalWrite (11, HIGH);
+//    delay (100);
+//    digitalWrite (11, LOW);
+//    delay (30000);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     leftFeederDur = leftFeederDur + (millis() - Start);
     while (millis() - Start <= 250) {

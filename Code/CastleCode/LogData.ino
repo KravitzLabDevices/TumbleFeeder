@@ -111,9 +111,9 @@ void CreatePos() {
   int index6 = all.indexOf(" ", index5 + 1);
   mode = all.substring(0, index).toInt();
   open_duration = all.substring(index + 1, index2).toInt();
-  CSL = all.substring(index2, index3).toInt();  
-  on_hour = all.substring(index3, index4).toInt();  
-  off_hour = all.substring(index4, index5).toInt();  
+  CSL = all.substring(index2, index3).toInt();
+  on_hour = all.substring(index3, index4).toInt();
+  off_hour = all.substring(index4, index5).toInt();
   openpos = all.substring(index5, index6).toInt();
   closedpos = all.substring(index6).toInt();
   configfile.close();
@@ -163,9 +163,9 @@ void getFilename(char *filename) {
 void writeConfigFile() {
   configfile = SD.open("CENTER.csv", FILE_WRITE);
   configfile.rewind();
-  configfile.print(freefeed); 
+  configfile.print(freefeed);
   configfile.print(" ");
-  configfile.print(open_duration); 
+  configfile.print(open_duration);
   configfile.print(" ");
   configfile.print(CSL);
   configfile.print(" ");
@@ -178,4 +178,4 @@ void writeConfigFile() {
   configfile.println(closedpos);
   configfile.flush();
   configfile.close();
-} 
+}

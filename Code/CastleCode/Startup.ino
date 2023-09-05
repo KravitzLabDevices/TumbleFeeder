@@ -1,4 +1,6 @@
 void startup() {
+  Serial.begin(9600);
+  
   /********************************************************
     Initialize pins
   ********************************************************/
@@ -19,7 +21,7 @@ void startup() {
 
   LowPower.attachInterruptWakeup(A0, right_interrupt, FALLING);
   LowPower.attachInterruptWakeup(A1, left_interrupt, FALLING);
-  LowPower.attachInterruptWakeup(A2, feed_interrupt, CHANGE);
+  LowPower.attachInterruptWakeup(A2, feed_interrupt, FALLING);
   LowPower.attachInterruptWakeup(A3, interrupt, CHANGE);
 
   /********************************************************

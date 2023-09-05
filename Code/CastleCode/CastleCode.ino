@@ -12,7 +12,7 @@ void setup() {
   Serial.begin(9600);
   startup();
   display.begin();
-  display.fillRect(0, 0, 168, 144, WHITE);  
+  display.fillRect(0, 0, 168, 144, WHITE);
   while (!SessionStarted) {
     Setup();
   }
@@ -22,6 +22,8 @@ void setup() {
      Run device
  *****************************************************************/
 void loop() {
+  Serial.println("Start of loop");
+
   doWork();
   LowPower.sleep(5000);
   update_display();
