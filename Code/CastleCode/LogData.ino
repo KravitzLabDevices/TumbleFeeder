@@ -5,7 +5,7 @@ void logData() {
   //Blink(8, 25, 2);  //blink while logging
   WriteToSD();
   logfile.flush();
-  delay (100);
+  delay(100);
 }
 
 /********************************************************
@@ -25,21 +25,21 @@ void WriteToSD() {
   logfile.print(":");
   if (now.minute() < 10) {
     logfile.print('0');
-  }// Trick to add leading zero for formatting
+  }  // Trick to add leading zero for formatting
   logfile.print(now.minute());
   logfile.print(":");
   if (now.second() < 10) {
     logfile.print('0');
-  }// Trick to add leading zero for formatting
+  }  // Trick to add leading zero for formatting
   logfile.print(now.second());
   logfile.print(",");
 
   logfile.print(rtc.getTemperature());
   logfile.print(",");
 
-  logfile.print(millis() / 1000.0000); // print elapsed time
+  logfile.print(millis() / 1000.0000);  // print elapsed time
   logfile.print(",");
-  logfile.print(measuredvbat); // Print battery voltage
+  logfile.print(measuredvbat);  // Print battery voltage
   logfile.print(",");
 
   logfile.print(leftPokeCount);
@@ -56,9 +56,9 @@ void WriteToSD() {
   logfile.print(leftFeederDur);
   logfile.print(",");
   if (freefeed == true) {
-    logfile.println(0); // freefeed
+    logfile.println(0);  // freefeed
   } else {
-    logfile.println(1); // fr1
+    logfile.println(1);  // fr1
   }
 }
 
@@ -79,13 +79,13 @@ void CreateFile() {
   Serial.print(filename);
   logfile = SD.open(filename, FILE_WRITE);
 
-  if ( ! logfile ) {
+  if (!logfile) {
     error(3);
   }
   //write header
   logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
   logfile.flush();
-  delay (100);
+  delay(100);
 }
 
 /********************************************************
@@ -98,12 +98,12 @@ void CreatePos() {
   }
 
   ///////////////////////////////////////////////////////////
-  configfile = SD.open("CENTER.csv", FILE_WRITE); // CREATE
-  configfile = SD.open("CENTER.csv", FILE_READ); //READ
+  configfile = SD.open("CENTER.csv", FILE_WRITE);  // CREATE
+  configfile = SD.open("CENTER.csv", FILE_READ);   //READ
 
   String all = configfile.readString();
   //Serial.println(all);
-  int index = all.indexOf(" "); // how to parse by space here using substring method?
+  int index = all.indexOf(" ");  // how to parse by space here using substring method?
   int index2 = all.indexOf(" ", index + 1);
   int index3 = all.indexOf(" ", index2 + 1);
   int index4 = all.indexOf(" ", index3 + 1);
@@ -117,20 +117,14 @@ void CreatePos() {
   openpos = all.substring(index5, index6).toInt();
   closedpos = all.substring(index6).toInt();
   configfile.close();
-  delay (50);
+  delay(50);
 }
 
 /********************************************************
   print out error message if fail to detect sd card
 ********************************************************/
 void error(uint8_t errno) {
-  while (1) {
-    uint8_t i;
-    for (i = 0; i < errno; i++) {
-      DisplaySDError();
-      Serial.println(errno);
-    }
-  }
+  DisplaySDError();
 }
 
 /********************************************************
@@ -138,7 +132,7 @@ void error(uint8_t errno) {
 ********************************************************/
 void getFilename(char *filename) {
   DateTime now = rtc.now();
-  filename[7] = CSL / 100 + '0'; // SHOULD allow user to set the device number CSL
+  filename[7] = CSL / 100 + '0';  // SHOULD allow user to set the device number CSL
   filename[8] = CSL / 10 + '0';
   filename[9] = CSL % 10 + '0';
   filename[11] = now.month() / 10 + '0';
@@ -150,7 +144,7 @@ void getFilename(char *filename) {
   for (uint8_t i = 0; i < 100; i++) {
     filename[18] = '0' + i / 10;
     filename[19] = '0' + i % 10;
-    if (! SD.exists(filename)) {
+    if (!SD.exists(filename)) {
       break;
     }
   }

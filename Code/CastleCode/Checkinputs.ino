@@ -30,8 +30,6 @@ void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
   Lcheckfeed();
 }
 
-
-
 /********************************************************
   check whether the mice touch the left button, if so
   chamber open. during the opening period
@@ -74,7 +72,6 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
   check whether the mice touch the right button
 ********************************************************/
 void checkRight() {
-
   if (right_touch == 1) {
     int Start  = millis();
     inputtriggered = 2;
