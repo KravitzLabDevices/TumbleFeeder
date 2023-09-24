@@ -17,7 +17,7 @@ void run() {
     } else if (current >= next_interval && freefeed == true && !active_flag) {
       if (wake_counter % 180 == 0) {
         shake_food();
-        move_center(closedpos);
+        feeder_close(closedpos);
       }
     }
   }

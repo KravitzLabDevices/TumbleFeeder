@@ -21,13 +21,13 @@ void free_inputs(int closedpos, int openpos) {
     left_touch = 0;
     delay(250);
   }
-  Lcheckfeed();
+  checkFeeder();
 }
 
 void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
   checkRight();
   checkLeft(closedpos, openpos, open_duration);
-  Lcheckfeed();
+  checkFeeder();
 }
 
 /********************************************************
@@ -43,7 +43,7 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     leftPokeCount++;
     leftPokeDur = millis() - Start;
     update_display();
-    move_left(openpos);
+    feeder_open(openpos);
     feed_touch = 0;
 
     leftstart = millis();
@@ -53,7 +53,7 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
         feed_touch = 1;
       }
       Serial.println("Code 2");
-      Lcheckfeed();
+      checkFeeder();
       update_display();
       //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
     }
@@ -61,7 +61,7 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     logData();
     leftPokeDur = 0;
     leftFeederDur = 0;
-    move_center(closedpos);
+    feeder_close(closedpos);
 
     left_touch = 0;
     shake();
@@ -91,13 +91,13 @@ void checkRight() {
 /********************************************************
   check whether mouse is touching the metal rod for feeding
 ********************************************************/
-void Lcheckfeed() {
+void checkFeeder() {
 
   if (feed_touch == 1) { // touch3
     Serial.println("Code 3");
     int Start = millis();
     inputtriggered = 3;
-    leftFeederCount++;
+    FeederCount++;
     
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///// THIS NEXT CODE IS FOR TAKING TRIGGERED VIDEOS WITH BONSAI, IF YOU'RE NOT DOING THAT LEAVE IT COMMENTED OUT!

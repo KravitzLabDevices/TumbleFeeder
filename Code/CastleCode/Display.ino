@@ -28,31 +28,33 @@ void display_current_params() {
   display.setCursor(80, 55);
   display.print(CSL);
   display.setCursor(12, 70);
-  display.print("Time open: ");
+  display.print("Sec open: ");
   display.setCursor(80, 70);
   display.print(open_duration);
   display.setCursor(12, 85);
   display.print("Open Pos: ");
   display.setCursor(80, 85);
-  display.print(openpos);
+  display.print(openpos / 10);
   display.setCursor(12, 100);
   display.print("Close Pos: ");
   display.setCursor(80, 100);
-  display.print(closedpos);
+  display.print(closedpos / 10);
 
   DisplayBattery();
 
-  display.refresh();
-
   DateTime now = rtc.now();
-  display.setCursor(10, 130);
-  display.fillRect(10, 129, 200, 60, WHITE);
+  display.setCursor(5, 128);
+  display.fillRect(5, 127, 200, 60, WHITE);
+  if (now.month() < 10)
+    display.print('0');  // Trick to add leading zero for formatting
   display.print(now.month());
-  display.print("/");
+  display.print("-");
+  if (now.day() < 10)
+    display.print('0');  // Trick to add leading zero for formatting
   display.print(now.day());
-  display.print("/");
-  display.print(now.year());
-  display.print("      ");
+  display.print("-");
+  display.print(now.year() % 100);
+  display.print("     ");
   if (now.hour() < 10)
     display.print('0');  // Trick to add leading zero for formatting
   display.print(now.hour());
@@ -63,17 +65,19 @@ void display_current_params() {
   display.refresh();
 
   if (red_touch == 0) {
-    display.refresh();
+    Beep();
     SessionStarted = true;
-    CreateFile();
     display_mouse();
+    CreateFile();
     writeConfigFile();
     update_display();
   }
 
   if (blue_touch == 0) {
+    Beep();
     delay(100);
     display.fillRect(117, 2, 60, 50, WHITE);
+    menustart = millis();
     set_feed_paradigm();
   }
 
@@ -82,54 +86,63 @@ void display_current_params() {
 }
 
 void set_feed_paradigm() {
+  endstate = false;
   display.fillRect(134, 20, 35, 12, WHITE);
   display.setCursor(134, 20);
   display.println("Back");
   display.setCursor(135, 20);
   display.println("Back");
 
-  display.fillRect(132, 60, 35, 12, WHITE);
-  display.setCursor(132, 60);
+  display.fillRect(134, 60, 35, 12, WHITE);
+  display.setCursor(134, 60);
   display.println("Next");
-  display.setCursor(133, 60);
+  display.setCursor(135, 60);
   display.println("Next");
 
-  display.fillRect(128, 100, 35, 12, WHITE);
-  display.setCursor(128, 100);
-  display.println("Update");
-  display.setCursor(129, 100);
-  display.println("Update");
+  display.fillRect(134, 100, 35, 12, WHITE);
+  display.setCursor(134, 100);
+  display.println("Edit");
+  display.setCursor(135, 100);
+  display.println("Edit");
   display.refresh();
 
-  endstate = false;
   read_buttons();
   display.setCursor(80, 40);
   mode == 1 ? display.print("Free") : display.print("FR1");
   display.refresh();
-  delay(50);
-  display.fillRect(80, 40, 25, 12, WHITE);
-  display.refresh();
-  delay(50);
+
+  if ((millis() - menustart) > 250) {
+    display.fillRect(80, 40, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    menustart = millis();
+  }
 
   //change mode
   if (red_touch == 0) {
+    Beep();
     if (mode == 0) {
       mode = 1;
+      delay(200);
     } else {
       mode = 0;
+      delay(200);
     }
   }
 
   if (blue_touch == 0) {
-    endstate = true;
+    Beep();
+    display.fillRect(80, 40, 25, 12, WHITE);
     display.setCursor(80, 40);
     mode == 1 ? display.print("Free") : display.print("FR1");
     display.refresh();
     delay(100);
+    endstate = true;
     setting_device_num();
   }
 
   if (green_touch == 0) {
+    Beep();
     endstate = true;
     display_current_params();
   }
@@ -147,27 +160,35 @@ void setting_device_num() {
   display.setCursor(80, 55);
   display.print(CSL);
   display.refresh();
-  delay(80);
-  display.fillRect(80, 55, 25, 12, WHITE);
-  display.refresh();
-  delay(20);
+
+  if ((millis() - menustart) > 250) {
+    display.fillRect(80, 55, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    menustart = millis();
+  }
 
   if (red_touch == 0) {
+    Beep();
     CSL++;
-    if (CSL > 9) CSL = 0;
+    if (CSL > 19) CSL = 0;
     delay(200);
   }
 
   if (blue_touch == 0) {
+    Beep();
+    display.fillRect(80, 55, 25, 12, WHITE);
+    display.refresh();
     display.setCursor(80, 55);
     display.print(CSL);
     display.refresh();
     endstate = true;
-    delay(100);
+    delay(200);
     setting_open_duration();
   }
 
   if (green_touch == 0) {
+    Beep();
     endstate = true;
     display_current_params();
   }
@@ -175,38 +196,46 @@ void setting_device_num() {
   if (endstate == false) setting_device_num();
 }
 
+/////////////////////////
+// open duration
 void setting_open_duration() {
   endstate = false;
   read_buttons();
   display.setCursor(80, 70);
   display.print(open_duration);
   display.refresh();
-  delay(80);
-  display.fillRect(80, 70, 25, 12, WHITE);
-  display.refresh();
-  delay(20);
+
+  if ((millis() - menustart) > 250) {
+    display.fillRect(80, 70, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    menustart = millis();
+  }
 
   if (red_touch == 0) {
-    display.refresh();
+    Beep();
     open_duration += 10;
     if (open_duration > 120) open_duration = 10;
+    delay(100);
   }
 
   if (blue_touch == 0) {
+    Beep();
     display.setCursor(80, 70);
     display.print(open_duration);
     display.refresh();
-    endstate = true;
     digitalWrite(13, HIGH);
     myservo.attach(10);
     myservo.write(openpos);
     delay(300);
     myservo.detach();
     digitalWrite(13, LOW);
+    endstate = true;
     setting_open_position();
   }
 
   if (green_touch == 0) {
+    Beep();
     endstate = true;
     display_current_params();
   }
@@ -215,58 +244,91 @@ void setting_open_duration() {
 }
 
 /********************************************************
-  setting position can set the position of left feeding space,
-  middle block, and right feeding space. after the use finish
-  setting the device number(pressed button B once), they can
-  choose to directly start the program by pressing button A or
-  continue pressing button B to set position. press C to move
-  motor to the desirable pos and press b to go to the next
-  position you want to set. after finish setting press A to
-  start running
+  setting position can set the position of hopper when open,
 ********************************************************/
 void setting_open_position() {
+
+  display.fillRect(115, 20, 60, 12, WHITE);
+  display.setCursor(115, 20);
+  display.println("Decrease");
+  display.setCursor(116, 20);
+  display.println("Decrease");
+
+  display.fillRect(115, 100, 60, 12, WHITE);
+  display.setCursor(115, 100);
+  display.println("Increase");
+  display.setCursor(116, 100);
+  display.println("Increase");
+  display.refresh();
+
+
   endstate = false;
   read_buttons();
   display.setCursor(80, 85);
   display.print(openpos);
   display.refresh();
-  delay(80);
-  display.fillRect(80, 85, 25, 12, WHITE);
-  display.refresh();
-  delay(20);
+
+  if ((millis() - menustart) > 250) {
+    display.fillRect(80, 85, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    menustart = millis();
+  }
 
   if (red_touch == 0) {
+    Beep();
     delay(100);
-    display.refresh();
-    openpos += 5;
+    openpos += 10;
     digitalWrite(13, HIGH);
     myservo.attach(10);
-    myservo.write(openpos);
-    delay(300);
+
+    //slowly move servo to new openpos
+    for (int move = openpos - 10; move < openpos; move++) {
+      myservo.write(move);
+      delay(50);
+    }
+
     myservo.detach();
     digitalWrite(13, LOW);
-    if (openpos > 160) openpos = 0;
+
+    if (openpos > 90) openpos = 0;
   }
 
   if (blue_touch == 0) {
+    Beep();
+    display.fillRect(80, 85, 25, 12, WHITE);
     display.setCursor(80, 85);
     display.print(openpos);
     display.refresh();
-    endstate = true;
     digitalWrite(13, HIGH);
     myservo.attach(10);
     myservo.write(closedpos);
     delay(300);
     myservo.detach();
     digitalWrite(13, LOW);
+    endstate = true;
     setting_closed_position();
   }
 
   if (green_touch == 0) {
+    Beep();
     delay(100);
-    endstate = true;
-    display_current_params();
+    openpos -= 10;
+    digitalWrite(13, HIGH);
+    myservo.attach(10);
+
+    //slowly move servo to new openpos
+    for (int move = openpos + 10; move > openpos; move--) {
+      myservo.write(move);
+      delay(50);
+    }
+
+    myservo.detach();
+    digitalWrite(13, LOW);
+
+    if (openpos > 90) openpos = 90;
   }
+
   if (endstate == false) setting_open_position();
 }
 
@@ -276,25 +338,35 @@ void setting_closed_position() {
   display.setCursor(80, 100);
   display.print(closedpos);
   display.refresh();
-  delay(80);
-  display.fillRect(80, 100, 25, 12, WHITE);
-  display.refresh();
-  delay(20);
+
+  if ((millis() - menustart) > 250) {
+    display.fillRect(80, 100, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    menustart = millis();
+  }
 
   if (red_touch == 0) {
+    Beep();
     delay(100);
-    display.refresh();
-    closedpos += 5;
+    closedpos += 10;
     digitalWrite(13, HIGH);
     myservo.attach(10);
-    myservo.write(closedpos);
-    delay(300);
+
+    //slowly move servo to new closedpos
+    for (int move = closedpos - 10; move < closedpos; move++) {
+      myservo.write(move);
+      delay(50);
+    }
+
     myservo.detach();
     digitalWrite(13, LOW);
-    if (closedpos > 150) closedpos = 0;
+    if (closedpos > 140) closedpos = 140;
   }
 
   if (blue_touch == 0) {
+    Beep();
+    display.fillRect(80, 100, 25, 12, WHITE);
     display.setCursor(80, 100);
     display.print(closedpos);
     display.refresh();
@@ -303,8 +375,19 @@ void setting_closed_position() {
   }
 
   if (green_touch == 0) {
-    endstate = true;
-    display_current_params();
+    Beep();
+    delay(100);
+    closedpos -= 10;
+    digitalWrite(13, HIGH);
+    myservo.attach(10);
+
+    //slowly move servo to new openpos
+    for (int move = closedpos + 10; move > closedpos; move--) {
+      myservo.write(move);
+      delay(50);
+    }
+    myservo.detach();
+    digitalWrite(13, LOW);
   }
   if (endstate == false) setting_closed_position();
 }
@@ -361,7 +444,6 @@ void setting_off_hour() {
   time elapsed is also displayed
 *********************************************************/
 void update_display() {
-
   display.fillRect(0, 0, 168, 128, WHITE);  //clear screen
 
   display.setCursor(35, 14);
@@ -398,19 +480,23 @@ void update_display() {
   display.setCursor(12, 100);
   display.print("Feed: ");
   display.setCursor(80, 100);
-  display.print(leftFeederCount);
+  display.print(FeederCount);
 
   DisplayBattery();
 
   DateTime now = rtc.now();
-  display.setCursor(10, 130);
-  display.fillRect(10, 129, 200, 60, WHITE);
+  display.setCursor(5, 128);
+  display.fillRect(5, 127, 200, 60, WHITE);
+  if (now.month() < 10)
+    display.print('0');  // Trick to add leading zero for formatting
   display.print(now.month());
-  display.print("/");
+  display.print("-");
+  if (now.day() < 10)
+    display.print('0');  // Trick to add leading zero for formatting
   display.print(now.day());
-  display.print("/");
-  display.print(now.year());
-  display.print("      ");
+  display.print("-");
+  display.print(now.year() % 100);
+  display.print("     ");
   if (now.hour() < 10)
     display.print('0');  // Trick to add leading zero for formatting
   display.print(now.hour());
@@ -423,6 +509,18 @@ void update_display() {
   if (red_touch == 0) {
     delay(1000);
     if (red_touch == 0) {
+      display.fillRect(0, 0, 200, 150, WHITE);
+      display.setCursor(50, 50);
+      display.print("RESETTING...");
+      display.refresh();
+      Beep();
+      delay(200);
+      Beep();
+      delay(200);
+      Beep();
+      delay(200);
+      Beep();
+
       NVIC_SystemReset();
     }
   }

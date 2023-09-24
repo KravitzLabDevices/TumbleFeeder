@@ -51,7 +51,7 @@ void WriteToSD() {
   logfile.print(rightPokeDur);
   logfile.print(",");
 
-  logfile.print(leftFeederCount);
+  logfile.print(FeederCount);
   logfile.print(",");
   logfile.print(leftFeederDur);
   logfile.print(",");

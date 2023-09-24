@@ -38,13 +38,13 @@ int leftPokeCount = 0;
 int rightPokeCount = 0;
 int leftPokeDur = 0;
 int rightPokeDur = 0;
-int leftFeederCount = 0;
+int FeederCount = 0;
 int rightFeederCount = 0;
 int leftFeederDur = 0;
 int rightFeederDur = 0;
 int inputtriggered = 0;
 float measuredvbat;
-unsigned long starttime;
+unsigned long menustart;
 bool endstate = false;
 
 bool SessionStarted = false;
