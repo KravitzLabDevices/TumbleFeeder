@@ -57,7 +57,6 @@ unsigned long open_duration;
 int left_touch;
 int right_touch;
 int feed_touch;
-boolean freefeed;
 unsigned int wake_counter = 0;
 int on_hour;
 int off_hour;

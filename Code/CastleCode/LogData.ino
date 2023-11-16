@@ -55,10 +55,10 @@ void WriteToSD() {
   logfile.print(",");
   logfile.print(leftFeederDur);
   logfile.print(",");
-  if (freefeed == true) {
-    logfile.println(0);  // freefeed
+  if (mode == 0) {
+    logfile.println("FR1");  // fr1
   } else {
-    logfile.println(1);  // fr1
+    logfile.println("Free");  // freefeed
   }
 }
 
@@ -98,8 +98,8 @@ void CreatePos() {
   }
 
   ///////////////////////////////////////////////////////////
-  configfile = SD.open("CENTER.csv", FILE_WRITE);  // CREATE
-  configfile = SD.open("CENTER.csv", FILE_READ);   //READ
+  configfile = SD.open("CONFIG.csv", FILE_WRITE);  // CREATE
+  configfile = SD.open("CONFIG.csv", FILE_READ);   //READ
 
   String all = configfile.readString();
   //Serial.println(all);
@@ -155,9 +155,9 @@ void getFilename(char *filename) {
   Store the posiiton
 ********************************************************/
 void writeConfigFile() {
-  configfile = SD.open("CENTER.csv", FILE_WRITE);
+  configfile = SD.open("CONFIG.csv", FILE_WRITE);
   configfile.rewind();
-  configfile.print(freefeed);
+  configfile.print(mode);
   configfile.print(" ");
   configfile.print(open_duration);
   configfile.print(" ");

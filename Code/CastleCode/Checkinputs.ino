@@ -47,12 +47,10 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     feed_touch = 0;
 
     leftstart = millis();
-    Serial.println("Code 1");
     while (millis() - leftstart < (open_duration * 1000)) {
       if (digitalRead(A2) == LOW)   {
         feed_touch = 1;
       }
-      Serial.println("Code 2");
       checkFeeder();
       update_display();
       //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
@@ -94,7 +92,6 @@ void checkRight() {
 void checkFeeder() {
 
   if (feed_touch == 1) { // touch3
-    Serial.println("Code 3");
     int Start = millis();
     inputtriggered = 3;
     FeederCount++;
