@@ -23,7 +23,7 @@ To begin using the castle feeder, you will need to set your desired experimental
 
   
 
-When you have set your desired experimental parameters, press the red button to start the device. A mouse will run across the screen and it will display “Running!” at the top. This screen will display the mode, the device number, total left touches, total right touches, and total feed measurements. Feed is measured when the mouse touched the bars in the front.
+When you have set your desired experimental parameters, press the red button to start the device. A mouse will run across the screen and it will display “Running!” at the top. This screen will display the **mode, the device number, total left touches, total right touches, and total feed measurements**. Feed is measured when the mouse touched the bars in the front.
 
   
 
@@ -31,7 +31,7 @@ When you have set your desired experimental parameters, press the red button to 
 
   
 
-The FR1 task allows the mouse to control its feeding time. The mouse can access the food in the tumbler by touching the brass touch sensor on the left side of the device (left when looking at the device from the mouse's perspective). The right touch sensor does nothing, but touches are still recorded. The amount of time that the device is open is set on the settings menu. 60 seconds is the open time used most often.
+The FR1 task allows the mouse to control its feeding time. The mouse can access the food in the tumbler by touching the brass touch sensor on the left side of the device (left when looking at the device from the mouse's perspective). The right touch sensor does nothing, but touches are still recorded. The amount of time that the device is open is set on the settings menu. **60 seconds** is the open time used most often.
 
   
   
@@ -63,7 +63,7 @@ The file include the date and time, temperature in the cage, seconds since the d
 
   
 
-Using 60% high fat diet in the device can cause the pellets to stick together, preventing the mouse from accessing the food. While the shake setting on the device helps a little bit, occasionally you will have to mix the food up. This can be done by shaking the device or opening the back door and mixing up the food. Also, not overfilling the device and using smaller pieces help to prevent sticking inside the tumbler.
+Using **60% high fat diet** in the device can cause the pellets to stick together, preventing the mouse from accessing the food. While the shake setting on the device helps a little bit, occasionally you will have to mix the food up. This can be done by shaking the device or opening the back door and mixing up the food. Also, not overfilling the device and using smaller pieces help to prevent sticking inside the tumbler.
 
 The best open position is when the feeding side of the tumbler is just past the blocking wall.
 
