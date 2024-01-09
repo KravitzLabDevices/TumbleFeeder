@@ -32,6 +32,7 @@ void startup() {
   /********************************************************
     Create file
   ********************************************************/
+  SdFile::dateTimeCallback(dateTime);
   CreateFile();
   CreatePos();
 
