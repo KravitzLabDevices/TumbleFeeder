@@ -39,7 +39,5 @@ void shake_food() {
   shake ();
   feeder_close(closedpos);
   feeder_open(openpos);
-  FeederCount--;
   logData();
 }
-
