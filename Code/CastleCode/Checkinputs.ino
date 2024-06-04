@@ -47,13 +47,15 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     feed_touch = 0;
 
     leftstart = millis();
-    while (millis() - leftstart < (open_duration * 1000)) {
-      if (digitalRead(A2) == LOW)   {
+    while (millis() - leftstart < (open_duration * 1000)) {  //while feeder is open
+      if (digitalRead(A1) == LOW)   {
         feed_touch = 1;
       }
       checkFeeder();
       update_display();
+
       //If we want to extend the open interval if the mouse touches, we need to add code here to detect touches.
+
     }
 
     logData();

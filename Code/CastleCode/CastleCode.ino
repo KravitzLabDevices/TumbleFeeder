@@ -20,7 +20,6 @@ void setup() {
  *****************************************************************/
 void loop() {
   run();
-  delay (500);
   LowPower.sleep(5000);
   wake_counter++;
   update_display();
