@@ -30,13 +30,6 @@ void startup() {
   rtc.begin();  // initialize RTC
 
   /********************************************************
-    Create file
-  ********************************************************/
-  SdFile::dateTimeCallback(dateTime);  //added this line so the files on the SD card have the correct date and time
-  CreateFile();
-  CreatePos();
-
-  /********************************************************
     Start screen
   ********************************************************/
   display.begin();
@@ -44,4 +37,11 @@ void startup() {
   display.setTextColor(BLACK);
   display.setRotation(1);
   display.fillRect(0, 0, 168, 144, WHITE);
+
+  /********************************************************
+    Create file
+  ********************************************************/
+  SdFile::dateTimeCallback(dateTime);  //added this line so the files on the SD card have the correct date and time
+  CreateFile();
+  CreatePos();
 }

@@ -529,7 +529,7 @@ void update_display() {
   display.setCursor(80, 56);
   display.print(CSL);
 
-  display.drawFastHLine(10, 70, 80, BLACK);      
+  display.drawFastHLine(10, 70, 80, BLACK);
 
   display.setCursor(12, 78);
   display.print("Left: ");
@@ -602,11 +602,22 @@ void DisplaySDError() {
   Blink(8, 50, 3);
   delay(25);
   display.fillRect(0, 0, 168, 144, WHITE);
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setRotation(1);
-  display.setCursor(10, 10);
-  display.println("Check SD card!");
+  display.setCursor(5, 20);
+  display.println("Check SD card");
+
+  //Here's a fun riddle for users who don't have an SD card to ponder 
+  display.setTextSize(1);
+  display.setCursor(5, 60);
+  display.println("I'm smaller than a mouse");
+  display.setCursor(5, 70);
+  display.println("but I can fill up a house.");
+  display.setCursor(5, 85);
+  display.println("What am I?");
+
   display.refresh();
+  while (1);
 }
 
 /********************************************************
