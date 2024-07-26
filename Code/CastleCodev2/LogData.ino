@@ -56,7 +56,8 @@ void WriteToSD() {
   logfile.print(leftFeederDur);
   logfile.print(",");
   if (mode == 0) {
-    logfile.println("FR1");  // fr1
+    logfile.print("FR");  // fr1
+    logfile.println(FR);  // fr1
   } else {
     logfile.println("Free");  // freefeed
   }
@@ -109,6 +110,7 @@ void CreatePos() {
   int index4 = all.indexOf(" ", index3 + 1);
   int index5 = all.indexOf(" ", index4 + 1);
   int index6 = all.indexOf(" ", index5 + 1);
+  int index7 = all.indexOf(" ", index6 + 1);
   mode = all.substring(0, index).toInt();
   open_duration = all.substring(index + 1, index2).toInt();
   CSL = all.substring(index2, index3).toInt();
@@ -116,6 +118,7 @@ void CreatePos() {
   off_hour = all.substring(index4, index5).toInt();
   openpos = all.substring(index5, index6).toInt();
   closedpos = all.substring(index6).toInt();
+  FR = all.substring(index7).toInt();
   configfile.close();
   delay(50);
 }
@@ -169,7 +172,9 @@ void writeConfigFile() {
   configfile.print(" ");
   configfile.print(openpos);
   configfile.print(" ");
-  configfile.println(closedpos);
+  configfile.print(closedpos);
+  configfile.print(" ");
+  configfile.print(FR);
   configfile.flush();
   configfile.close();
 }

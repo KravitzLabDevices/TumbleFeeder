@@ -57,9 +57,9 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
         checkFeeder();
 
         display.fillRect(122, 36, 28, 24, WHITE);
-        display.setCursor(122, 36);
-        display.println("Feeding");
         display.setCursor(122, 48);
+        display.println("Feeding");
+        display.setCursor(122, 60);
         display.print(((open_duration * 1000) - (millis() - leftstart)) / 1000);;
         display.refresh();
 

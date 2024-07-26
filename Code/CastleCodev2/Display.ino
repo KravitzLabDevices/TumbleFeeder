@@ -22,7 +22,7 @@ void display_current_params() {
   display.setCursor(12, 36);
   display.print("Mode: ");
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR1");
+  mode == 1 ? display.print("Free") : display.print("FR");
 
   display.setCursor(12, 48);
   display.print("FR: ");
@@ -116,7 +116,7 @@ void set_feed_paradigm() {
 
   read_buttons();
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR1");
+  mode == 1 ? display.print("Free") : display.print("FR");
   display.refresh();
 
   if ((millis() - menustart) > 250) {
@@ -142,7 +142,7 @@ void set_feed_paradigm() {
     Beep();
     display.fillRect(80, 36, 25, 12, WHITE);
     display.setCursor(80, 36);
-    mode == 1 ? display.print("Free") : display.print("FR1");
+    mode == 1 ? display.print("Free") : display.print("FR");
     display.refresh();
     delay(100);
     endstate = true;
@@ -178,7 +178,7 @@ void setting_FR() {
   if (red_touch == 0) {
     Beep();
     FR++;
-    if (FR > 10) FR = 0;
+    if (FR > 10) FR = 1;
     delay(200);
   }
 
@@ -501,9 +501,9 @@ void update_display() {
   display.fillRect(0, 0, 168, 128, WHITE);  //clear screen
 
   display.setCursor(35, 14);
-  display.println("Running!");
+  display.println("Tumble!");
   display.setCursor(36, 14);
-  display.println("Running!");
+  display.println("Tumble!");
 
   digitalWrite(13, LOW);
   read_buttons();
@@ -515,28 +515,29 @@ void update_display() {
   display.drawRect(5, 5, 104, 110, BLACK);
   display.drawRect(2, 2, 110, 116, BLACK);
 
-  display.setCursor(12, 36);
+  display.setCursor(12, 30);
   display.print("Mode: ");
-  display.setCursor(80, 36);
+  display.setCursor(80, 30);
   mode == 1 ? display.print("Free") : display.print("FR");
 
-  display.setCursor(12, 48);
+  display.setCursor(12, 42);
   display.print("FR: ");
-  display.setCursor(80, 48);
+  display.setCursor(80, 42);
   display.print(FR);
-
-
-  display.setCursor(12, 60);
+  display.setCursor(12, 56);
   display.print("Device#: ");
-  display.setCursor(80, 60);
+  display.setCursor(80, 56);
   display.print(CSL);
-  display.setCursor(12, 76);
+
+  display.drawFastHLine(10, 70, 80, BLACK);      
+
+  display.setCursor(12, 78);
   display.print("Left: ");
-  display.setCursor(80, 76);
+  display.setCursor(80, 78);
   display.print(leftPokeCount);
-  display.setCursor(12, 88);
+  display.setCursor(12, 90);
   display.print("Right: ");
-  display.setCursor(80, 88);
+  display.setCursor(80, 90);
   display.print(rightPokeCount);
   display.setCursor(12, 100);
   display.print("Feed: ");
