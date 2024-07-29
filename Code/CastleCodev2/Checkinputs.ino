@@ -43,6 +43,11 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
     leftPokeDur = millis() - Start;
     update_display();
 
+    //make sure FR is not 0!
+    if (FR == 0) {
+      FR = 1;
+    }
+    
     //If the FR ratio has been reached
     if (leftPokeCount % FR == 0) {
       feeder_open(openpos);
@@ -70,7 +75,7 @@ void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
       }
 
-        display.fillRect(122, 36, 28, 24, WHITE);
+      display.fillRect(122, 36, 28, 24, WHITE);
       logData();
       leftPokeDur = 0;
       leftFeederDur = 0;
