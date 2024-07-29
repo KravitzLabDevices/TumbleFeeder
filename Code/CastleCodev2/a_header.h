@@ -46,7 +46,7 @@ int inputtriggered = 0;
 float measuredvbat;
 unsigned long menustart;
 bool endstate = false;
-int FR=3;
+int FR=1;
 
 bool SessionStarted = false;
 const unsigned long display_interval = 100;
