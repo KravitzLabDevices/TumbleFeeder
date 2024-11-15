@@ -41,6 +41,8 @@ void WriteToSD() {
   logfile.print(",");
   logfile.print(measuredvbat);  // Print battery voltage
   logfile.print(",");
+  logfile.print(CSL);
+  logfile.print(",");
 
   logfile.print(leftPokeCount);
   logfile.print(",");
@@ -67,28 +69,31 @@ void WriteToSD() {
   create new sd file everytime when castle fed is started
   the filename include the current datetime
 ********************************************************/
+bool fileCreated = false;
+
 void CreateFile() {
-  // see if the card is present and can be initialized:
-  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
-    error(2);
-    Serial.println("error 2");
+  if (fileCreated) {
+    Serial.println("File already created, skipping.");
+    return;
   }
-
-  // Name filename in format F###_MMDDYYNN, where MM is month, DD is day, YY is year, and NN is an incrementing number for the number of files initialized each day
-  strcpy(filename, "CASTLE_______________.CSV");  // placeholder filename len(16) // refer to force library, make to right length __ CSL007
+  strcpy(filename, "CASTLE_______________.CSV");
   getFilename(filename);
-  Serial.print(filename);
+  Serial.print("Creating file: ");
+  Serial.println(filename);
+
   logfile = SD.open(filename, FILE_WRITE);
-
   if (!logfile) {
-    error(3);
+    Serial.println("Failed to open file for writing!");
+    return;
   }
-  //write header
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
-  logfile.flush();
-  delay(100);
-}
 
+  // Write header
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
+  logfile.flush();
+  Serial.println("File created and header written.");
+
+  fileCreated = true;  // Prevent further calls
+}
 /********************************************************
   Read servo position from the csv file stored in the sd
 ********************************************************/
