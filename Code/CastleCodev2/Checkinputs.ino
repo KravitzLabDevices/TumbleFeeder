@@ -10,131 +10,109 @@ void read_buttons() {
 ********************************************************/
 void free_inputs(int closedpos, int openpos) {
   checkRight();
-  if (left_touch == 1) {
-    int Start  = millis();
-    inputtriggered = 1;
-    leftPokeCount++;
-    leftPokeDur = millis() - Start;
-    update_display();
-    leftPokeDur = 0;
-    leftFeederDur = 0;
-    left_touch = 0;
-    delay(250);
-  }
   checkFeeder();
-}
 
-void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
-  checkRight();
-  checkLeft(closedpos, openpos, open_duration);
-  checkFeeder();
-}
-
-/********************************************************
-  check whether the mice touch the left button, if so
-  chamber open. during the opening period
-  we check whether they are feeding.
-********************************************************/
-void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
+  // Process left touches
   if (left_touch == 1) {
-    int Start = millis();
-    inputtriggered = 1;
-    leftPokeCount++;
-    leftPokeDur = millis() - Start;
-    update_display();
-
-    //make sure FR is not 0!
-    if (FR == 0) {
-      FR = 1;
+    unsigned long startTime = millis();  // Start time for touch duration
+    while (digitalRead(A2) == LOW) {
+      delay(1);
     }
-    
-    //If the FR ratio has been reached
-    if (leftPokeCount % FR == 0) {
-      feeder_open(openpos);
+    leftPokeCount++;
+    leftPokeDur = millis() - startTime;  // Calculate duration
+    update_display();
+    logData();
+    left_touch = 0;
 
-      feed_touch = 0;
+    leftPokeDur = 0;
+  }
+}
+  /********************************************************
+  General function to check inputs for left, right, and feeder
+********************************************************/
+  void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
+    checkRight();
+    checkLeft(closedpos, openpos, open_duration);
+    checkFeeder();
+  }
 
-      leftstart = millis();
-      while (millis() - leftstart < (open_duration * 1000)) {  //while feeder is open
-        if (digitalRead(A1) == LOW)   {
-          feed_touch = 1;
+  /********************************************************
+  Check whether the mice touch the left button.
+  If touched, log the event and open the chamber.
+********************************************************/
+  void checkLeft(int closedpos, int openpos, unsigned long open_duration) {
+    if (left_touch == 1) {
+      unsigned long startTime = millis();  // Start time for touch duration
+      while (digitalRead(A2) == LOW) {
+        delay(1);
+      }
+      leftPokeCount++;
+      leftPokeDur = millis() - startTime;  // Calculate duration
+      update_display();
+      logData();
+      left_touch = 0;
+      leftPokeDur = 0;
+
+      // Check if FR condition is met to open feeder
+      if (FR == 0) FR = 1;  // Ensure FR is not 0
+      if (leftPokeCount % FR == 0) {
+        feeder_open(openpos);
+        unsigned long feederStart = millis();
+
+        while (millis() - feederStart < (open_duration * 1000)) {  // Feeder open period
+          checkFeeder();                                           // Check and log feed touches during open period
+
+          // Display remaining open time and status
+          display.fillRect(122, 36, 28, 24, WHITE);
+          display.setCursor(122, 48);
+          display.println("Feeding");
+          display.setCursor(122, 60);
+          display.print(((open_duration * 1000) - (millis() - feederStart)) / 1000);
+          display.refresh();
+
+          update_display();  // Update other display elements
         }
-        checkFeeder();
 
         display.fillRect(122, 36, 28, 24, WHITE);
-        display.setCursor(122, 48);
-        display.println("Feeding");
-        display.setCursor(122, 60);
-        display.print(((open_duration * 1000) - (millis() - leftstart)) / 1000);;
-        display.refresh();
-
-        update_display();
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //If we want to extend the open interval if the mouse touches, we can add code here to detect touches.
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        feeder_close(closedpos);
+      }  // Reset after logging
+    }
+  }
+  /********************************************************
+  Check whether the mice touch the right button.
+********************************************************/
+  void checkRight() {
+    if (right_touch == 1) {
+      unsigned long startTime = millis();  // Start time for touch duration
+      while (digitalRead(A0) == LOW) {
+        delay(1);
       }
+      rightPokeCount++;
+      rightPokeDur = millis() - startTime;  // Calculate duration
+      update_display();
 
-      display.fillRect(122, 36, 28, 24, WHITE);
+      // Log the touch and reset relevant variables
       logData();
-      leftPokeDur = 0;
-      leftFeederDur = 0;
-      feeder_close(closedpos);
-
-      left_touch = 0;
-      shake();
+      right_touch = 0;
+      rightPokeDur = 0;  // Reset after logging
     }
   }
-}
-
-/********************************************************
-  check whether the mice touch the right button
+  /********************************************************
+  Check whether the mouse touches the feeding rod.
 ********************************************************/
-void checkRight() {
-  if (right_touch == 1) {
-    int Start  = millis();
-    inputtriggered = 2;
-    rightPokeCount++;
-    rightPokeDur = millis() - Start;
-    update_display();
+  void checkFeeder() {
+    if (feed_touch == 1) {
+      unsigned long startTime = millis();  // Start time for touch duration
+      while (digitalRead(A1) == LOW) {
+        delay(1);
+      }
+      FeederCount++;
+      leftFeederDur = millis() - startTime;  // Calculate duration
+      update_display();
 
-    logData();
-    rightPokeDur = 0;
-    rightFeederCount = 0;
-    rightFeederDur = 0;
-    right_touch = 0;
-    delay(250);
-  }
-}
-
-/********************************************************
-  check whether mouse is touching the metal rod for feeding
-********************************************************/
-void checkFeeder() {
-
-  if (feed_touch == 1) { // touch3
-    int Start = millis();
-    inputtriggered = 3;
-    FeederCount++;
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///// THIS NEXT CODE IS FOR TAKING TRIGGERED VIDEOS WITH BONSAI, IF YOU'RE NOT DOING THAT LEAVE IT COMMENTED OUT!
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //    //send a pulse to trigger Bonsai for video recording
-    //    digitalWrite (11, HIGH);
-    //    delay (100);
-    //    digitalWrite (11, LOW);
-    //    delay (30000);
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    leftFeederDur = leftFeederDur + (millis() - Start);
-    while (millis() - Start <= 250) {
-      digitalWrite(12, HIGH); ////
+      // Log the touch and reset relevant variables
+      logData();
+      feed_touch = 0;
+      leftFeederDur = 0;  // Reset after logging
     }
-    digitalWrite(12, LOW);
-    update_display();
-    logData(); // added logdata here
-    leftFeederDur = 0;
-    feed_touch = 0;
   }
-}

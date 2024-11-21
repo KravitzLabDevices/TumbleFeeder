@@ -2,7 +2,6 @@
   check for user button touch and start the device
 ********************************************************/
 void run() {
-  Serial.println (mode);
 
   unsigned long current = millis();
 
