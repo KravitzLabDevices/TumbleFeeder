@@ -2,5 +2,5 @@
 <br>
 Updated 2/27/2025
 
-![Figure S2](https://github.com/KravitzLab/Barrett2024/blob/main/Images/FigureS2.png)
+![TumbleFeeder](https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/photos/TumbleFeederFrontView.png)
 
