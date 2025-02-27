@@ -2,5 +2,5 @@
 <br>
 Updated 2/27/2025
 
-![TumbleFeeder](https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/photos/TumbleFeederFrontView.png)
+![TumbleFeeder](https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/photos/CastleElectronics.JPG)
 
