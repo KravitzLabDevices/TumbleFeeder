@@ -33,9 +33,9 @@ To assemble the PCB, we recommend watching the [Tumble Feeder Build Video](https
 
 ---
 # 3) Assemble the TumbleFeeder
-To assemble the TumbleFeeder, we recommend watching the [Tumble Feeder Build Video](https://www.youtube.com/watch?v=_t9MZKi8byM") (YouTube Link)
+To assemble the TumbleFeeder, we recommend from 1:54 of the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=114) (YouTube Link)
 
 ---
 # 4) Flash and test
-To Flash and test, we recommend watching the [Tumble Feeder Build Video](https://www.youtube.com/watch?v=_t9MZKi8byM") (YouTube Link)
+To Flash and test, watch from 7:19 on the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469) (YouTube Link)
 
