@@ -18,7 +18,7 @@
 
 # 2) Populate the PCB
 
-First order the two custom PCBs.  You can order from OshPark using the link below, or order from any PCB house.
+First order the two custom PCBs.  You can order from OshPark using the link below, or order from any PCB house using the [Eagle .brd and .sch files](https://github.com/KravitzLabDevices/TumbleFeeder/tree/main/How%20to%20Build/Electronics).
 1) The main PCB<br>
 <img width="5252" height="1251" alt="6047149a1ac6b429ac75a2f4fb032c3e" src="https://github.com/user-attachments/assets/22cf06b9-baf9-44b1-90c9-bc0355a9fac0" />
 <a href="https://oshpark.com/shared_projects/G0He9rRP"><img src="https://oshpark.com/assets/badge-5b7ec47045b78aef6eb9d83b3bac6b1920de805e9a0c227658eac6e19a045b9c.png" alt="Order from OSH Park"></img></a>
