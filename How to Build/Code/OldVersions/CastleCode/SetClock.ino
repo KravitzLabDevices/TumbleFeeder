@@ -1,3 +1,0 @@
-//set clock
-void SetClock() {
-}
