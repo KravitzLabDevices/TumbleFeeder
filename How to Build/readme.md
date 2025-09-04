@@ -35,6 +35,7 @@ To assemble the PCB, we recommend watching the [Tumble Feeder Build Video](https
 # 3) Assemble the TumbleFeeder
 To assemble the TumbleFeeder, we recommend from 1:54 of the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=114) (YouTube Link)
 
+To start, solder all the headers onto the custom PCB board and the individual components <img width="5252" height="1251" alt="6047149a1ac6b429ac75a2f4fb032c3e" src="[https://github.com/user-attachments/assets/22cf06b9-baf9-44b1-90c9-bc0355a9fac0](https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg)" />
 ---
 # 4) Flash and test
 To Flash and test, watch from 7:19 on the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469) (YouTube Link)
