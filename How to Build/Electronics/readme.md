@@ -1,1 +1,14 @@
-readme
+# Electronics
+
+First order the two custom PCBs.  You can order from OshPark using the link below, or order from any PCB house using the [Eagle .brd and .sch files](https://github.com/KravitzLabDevices/TumbleFeeder/tree/main/How%20to%20Build/Electronics).
+1) The main PCB<br>
+<img width="5252" height="1251" alt="6047149a1ac6b429ac75a2f4fb032c3e" src="https://github.com/user-attachments/assets/22cf06b9-baf9-44b1-90c9-bc0355a9fac0" />
+<a href="https://oshpark.com/shared_projects/G0He9rRP"><img src="https://oshpark.com/assets/badge-5b7ec47045b78aef6eb9d83b3bac6b1920de805e9a0c227658eac6e19a045b9c.png" alt="Order from OSH Park"></img></a>
+<br>
+<br>
+2) The small touch adapter PCB:  <br>
+<img width="179" height="549" alt="{D103E9D6-0BA7-4F27-A367-4E5D317DD4B2}" src="https://github.com/user-attachments/assets/d805b8a3-02ef-410a-bc81-43f006afd9fd" />  <br>  
+<a href="https://oshpark.com/shared_projects/q8TvJ7jU"><img src="https://oshpark.com/assets/badge-5b7ec47045b78aef6eb9d83b3bac6b1920de805e9a0c227658eac6e19a045b9c.png" alt="Order from OSH Park"></img></a>
+
+Next order all the necessary parts, [the BOM is here](https://docs.google.com/spreadsheets/d/167cMoID8Alf8LLFngqACXI5k8x5zef9LXBQ9bw7NaI0/edit?gid=0#gid=0).  
+To assemble the PCB, we recommend watching the [Tumble Feeder Build Video](https://www.youtube.com/watch?v=_t9MZKi8byM") (YouTube Link)
