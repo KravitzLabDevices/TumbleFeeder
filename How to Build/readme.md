@@ -49,3 +49,37 @@ Next, assemble all of the components onto the custom PCB board as seen here
 # 4) Flash and test
 To Flash and test, watch from 7:19 on the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469) (YouTube Link)
 
+Arduino Libraries Used:
+
+Servo — Servo.h
+  by Michael Margolis, Arduino
+
+Wire — Wire.h
+  Included with Arduino AVR Boards (via Boards Manager)
+
+RTClib — RTClib.h
+  by Adafruit
+
+Arduino Low Power — ArduinoLowPower.h
+  by Arduino
+
+SPI — SPI.h
+  Included with Adafruit SAMD Boards (via Boards Manager)
+
+SdFat — SdFat.h
+  by Bill Greiman
+
+Adafruit GFX — Adafruit_GFX.h
+  by Adafruit
+
+Time — TimeLib.h
+  by Michael Margolis
+
+FlashStorage — FlashStorage.h
+  by Various Authors
+
+Adafruit FreeTouch — Adafruit_FreeTouch.h
+  by Adafruit
+
+Adafruit SHARP Memory Display — Adafruit_SharpMem.h
+  by Adafruit
