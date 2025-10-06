@@ -64,15 +64,57 @@ Order the two custom PCBs (OSH Park badges below) or build from the Eagle files.
 
 ## 3) Assemble the TumbleFeeder
 
-For a full assembly demo, jump to **1:54** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=114)**.
+For a full assembly demo, watch the **[Build Video](https://youtu.be/_t9MZKi8byM?si=ihr77ZkaLHi7A_hr&t=212)**.
 
-**Recommended order:**
-1. Solder **all headers** onto the custom PCBs and individual modules.  
-   <img width="640" alt="Header soldering" src="https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg?raw=true" />
-   > **Note:** The **RTC board** is the only module that uses **stacking headers**.
+### Recommended order
 
-2. Install modules onto the **main PCB** as shown below.  
-   <img width="640" alt="Assembly reference" src="https://github.com/user-attachments/assets/a6888589-f7cd-46b5-8550-a69b7f8e138a" />
+1) **Solder headers on all PCBs and modules**
+
+<img align="right" width="360" alt="Header soldering" src="https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg?raw=true" />
+
+- Solder all pin headers onto the custom PCBs and each module.
+- Keep pins vertical; use a breadboard or third-hand tool for alignment.
+
+> **Note:** The **RTC board** is the only module that uses **stacking headers**.
+
+<br clear="both" />
+
+---
+
+2) **Install modules onto the main PCB**
+
+<img width="640" alt="Assembly reference" src="https://github.com/user-attachments/assets/a6888589-f7cd-46b5-8550-a69b7f8e138a" />
+
+- Seat each module on the header footprint matching its silkscreen.
+- Double-check orientation and clearance before soldering.
+
+---
+
+3) **Assemble the tumbler (touch board + JST lead)**
+
+Jump to **1:54** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=114)**.
+
+<img align="right" width="320" alt="Touch board wiring" src="https://github.com/user-attachments/assets/5fce34d3-263c-495a-9cff-db253f00a2b3" />
+
+- Solder the **JST-PH** connector to the **touch adapter board**.
+- Plug a **2-pin JST lead** into the connector.
+- Remove the unused cable on the connector.
+- **Cable length tip:** If the red wire is too short, you can repurpose extra black lead as an **extension for the red line**. Use heat-shrink and solder the staggered splices.
+
+<br clear="both" />
+
+---
+
+4) **Attach components to the 3D-printed body**
+
+Jump to **3:32** in the **[Build Video](https://youtu.be/_t9MZKi8byM?si=ihr77ZkaLHi7A_hr&t=212)**.
+
+<img width="353" height="344" alt="Mounting into the printed body" src="https://github.com/user-attachments/assets/5e5b75b2-e34f-4623-a201-45259496f749" />
+
+- Dry-fit first to confirm cable routing and connector access.
+- Mount the main PCB, touch board, and wiring harness; avoid pinching cables.
+- Verify clearance for moving parts before final fasteners.
+
 
 ---
 
