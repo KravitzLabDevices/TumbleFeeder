@@ -35,7 +35,16 @@ To assemble the PCB, we recommend watching the [Tumble Feeder Build Video](https
 # 3) Assemble the TumbleFeeder
 To assemble the TumbleFeeder, we recommend from 1:54 of the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=114) (YouTube Link)
 
-To start, solder all the headers onto the custom PCB board and the individual components <img width="5252" height="1251" alt="6047149a1ac6b429ac75a2f4fb032c3e" src="[https://github.com/user-attachments/assets/22cf06b9-baf9-44b1-90c9-bc0355a9fac0](https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg)" />
+To start, solder all the headers onto the custom PCB board and the individual components
+<img width="829" height="615" alt="{AB542B00-AB26-41CA-B7AA-14D2C4CE198B}" src="https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg?raw=true" />
+<br>
+<br>
+<img width="200" height="200" alt="{AB542B00-AB26-41CA-B7AA-14D2C4CE198B}" src="https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4616%20(1).jpg" />Note: The RTC board is the only component that gets "Stacking Headers".
+<br>
+<br>
+Next, assemble all of the components onto the custom PCB board as seen here
+<img width="829" height="615" alt="{AB542B00-AB26-41CA-B7AA-14D2C4CE198B}" src="https://github.com/user-attachments/assets/a6888589-f7cd-46b5-8550-a69b7f8e138a" />
+
 ---
 # 4) Flash and test
 To Flash and test, watch from 7:19 on the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469) (YouTube Link)
