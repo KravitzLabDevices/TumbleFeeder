@@ -16,7 +16,9 @@ A fast, repeatable build you can complete with common tools and off-the-shelf pa
 1. **3D print the four parts**  
 2. **Populate the PCB(s)**  
 3. **Assemble the TumbleFeeder**  
-4. **Flash and test the device**  
+4. **Flash and test the device**
+
+   
 → Prefer video? Watch the **[Build Video](https://www.youtube.com/watch?v=_t9MZKi8byM)**.
 
 ---
