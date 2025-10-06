@@ -58,8 +58,6 @@ Order the two custom PCBs (OSH Park badges below) or build from the Eagle files.
 **Parts:** See the **[BOM](https://docs.google.com/spreadsheets/d/167cMoID8Alf8LLFngqACXI5k8x5zef9LXBQ9bw7NaI0/edit?gid=0#gid=0)**.  
 **Soldering walkthrough:** in the **[Build Video](https://www.youtube.com/watch?v=_t9MZKi8byM)**.
 
-> **Note:** The **RTC board** is the only module that uses **stacking headers**.
-
 ---
 
 ## 3) Assemble the TumbleFeeder
@@ -69,6 +67,7 @@ For a full assembly demo, jump to **1:54** in the **[Build Video](https://youtu.
 **Recommended order:**
 1. Solder **all headers** onto the custom PCBs and individual modules.  
    <img width="640" alt="Header soldering" src="https://github.com/KravitzLabDevices/TumbleFeeder/blob/main/How%20to%20Build/Photos/IMG_4614%20(1).jpg?raw=true" />
+   > **Note:** The **RTC board** is the only module that uses **stacking headers**.
 
 2. Install modules onto the **main PCB** as shown below.  
    <img width="640" alt="Assembly reference" src="https://github.com/user-attachments/assets/a6888589-f7cd-46b5-8550-a69b7f8e138a" />
@@ -80,31 +79,6 @@ For a full assembly demo, jump to **1:54** in the **[Build Video](https://youtu.
 Jump to **7:19** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469)** for flashing and validation.
 
 ### Required Arduino Libraries
-<img align="right" width="320" alt="Libraries screenshot" src="https://github.com/user-attachments/assets/3c8d73ed-6d71-4cb3-8a98-bc16a7ef795e" />
-
-- **Servo — `Servo.h`** — Michael Margolis, Arduino  
-- **Wire — `Wire.h`** — Included with *Arduino AVR Boards* (Boards Manager)  
-- **RTClib — `RTClib.h`** — Adafruit  
-- **Arduino Low Power — `ArduinoLowPower.h`** — Arduino  
-- **SPI — `SPI.h`** — Included with *Adafruit SAMD Boards* (Boards Manager)  
-- **SdFat — `SdFat.h`** — Bill Greiman  
-- **Adafruit GFX — `Adafruit_GFX.h`** — Adafruit  
-- **Time — `TimeLib.h`** — Michael Margolis  
-- **FlashStorage — `FlashStorage.h`** — Various Authors  
-- **Adafruit FreeTouch — `Adafruit_FreeTouch.h`** — Adafruit  
-- **Adafruit SHARP Memory Display — `Adafruit_SharpMem.h`** — Adafruit  
-
-<br clear="both" />
-
-<details>
-  <summary><strong>Troubleshooting (common flash/test issues)</strong></summary>
-
-- If your board seems to “wait for Serial,” remove any `while (!Serial) {}` in `setup()` (or gate it behind `if (Serial)`).
-- On Feather M0/SAMD boards, ensure the correct board package is installed and the right COM port is selected.
-- If flashing fails mid-way, double-tap reset to enter bootloader mode and retry upload.
-</details>
-
-
 <!-- Image floats to the right; text flows on the left -->
 <img align="right" width="496" height="255" alt="Libraries screenshot"
      src="https://github.com/user-attachments/assets/3c8d73ed-6d71-4cb3-8a98-bc16a7ef795e" />
@@ -133,5 +107,11 @@ Jump to **7:19** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=sha
   _by Adafruit_
 - **Adafruit SHARP Memory Display — `Adafruit_SharpMem.h`**  
   _by Adafruit_
+
+
+<summary><strong>Troubleshooting (common flash/test issues)</strong></summary>
+
+- On Feather M0/SAMD boards, ensure the correct board package is installed and the right COM port is selected.
+- If flashing fails mid-way, double-tap reset to enter bootloader mode and retry upload.
 
 <br clear="both" />
