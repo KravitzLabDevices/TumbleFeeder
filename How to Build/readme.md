@@ -49,7 +49,7 @@ Next, assemble all of the components onto the custom PCB board as seen here
 # 4) Flash and test
 To Flash and test, watch from 7:19 on the [Tumble Feeder Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469) (YouTube Link)
 
-Arduino Libraries Used:
+The libraries required to flash the code are listed below:
 
 Servo — Servo.h
   by Michael Margolis, Arduino
