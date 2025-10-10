@@ -172,6 +172,7 @@ The firmware expects the following libraries:
 
 To initialize the clock, load **File → Examples → RTClib → ds3231** and upload. This sets the RTC using the sketch’s compile time.  
 
+<img width="731" height="923" alt="image" src="https://github.com/user-attachments/assets/4049c554-0c02-4313-91e6-9d546135834e" />
 
 - On Feather M0/SAMD boards, ensure the correct board package is installed and the right COM port is selected.
 - If flashing fails mid-way, double-tap reset to enter bootloader mode and retry upload.
