@@ -122,46 +122,60 @@ Jump to **3:32** in the **[Build Video](https://youtu.be/_t9MZKi8byM?si=ihr77Zka
 
 Jump to **7:19** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=shared&t=469)** for flashing and validation.
 
-### Required Arduino Libraries
-<!-- Image floats to the right; text flows on the left -->
+### Required Arduino libraries
 <img align="right" width="496" height="255" alt="Libraries screenshot"
      src="https://github.com/user-attachments/assets/3c8d73ed-6d71-4cb3-8a98-bc16a7ef795e" />
 
-**The libraries required to flash the code are listed below:**
+The firmware expects the following libraries:
 
-- **Servo — `Servo.h`**  
-  _by Michael Margolis, Arduino_
-- **Wire — `Wire.h`**  
-  _Included with Arduino AVR Boards (via Boards Manager)_
-- **RTClib — `RTClib.h`**  
-  _by Adafruit_
-- **Arduino Low Power — `ArduinoLowPower.h`**  
-  _by Arduino_
-- **SPI — `SPI.h`**  
-  _Included with Adafruit SAMD Boards (via Boards Manager)_
-- **SdFat — `SdFat.h`**  
-  _by Bill Greiman_
-- **Adafruit GFX — `Adafruit_GFX.h`**  
-  _by Adafruit_
-- **Time — `TimeLib.h`**  
-  _by Michael Margolis_
-- **FlashStorage — `FlashStorage.h`**  
-  _by Various Authors_
-- **Adafruit FreeTouch — `Adafruit_FreeTouch.h`**  
-  _by Adafruit_
-- **Adafruit SHARP Memory Display — `Adafruit_SharpMem.h`**  
-  _by Adafruit_
+- **Servo — `Servo.h`** — Michael Margolis, Arduino  
+- **Wire — `Wire.h`** — Included with *Arduino AVR Boards* (Boards Manager)  
+- **RTClib — `RTClib.h`** — Adafruit  
+- **Arduino Low Power — `ArduinoLowPower.h`** — Arduino  
+- **SPI — `SPI.h`** — Included with *Adafruit SAMD Boards* (Boards Manager)  
+- **SdFat — `SdFat.h`** — Bill Greiman  
+- **Adafruit GFX — `Adafruit_GFX.h`** — Adafruit  
+- **Time — `TimeLib.h`** — Michael Margolis  
+- **FlashStorage — `FlashStorage.h`** — Various Authors  
+- **Adafruit FreeTouch — `Adafruit_FreeTouch.h`** — Adafruit  
+- **Adafruit SHARP Memory Display — `Adafruit_SharpMem.h`** — Adafruit
 
-<img width="802" height="528" alt="image" src="https://github.com/user-attachments/assets/9ba3cf50-a338-421b-b639-3ce219a85c6a" />
+<br clear="both" />
 
-Paste the board managers URL into the section in the Preferences menu: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+---
 
-To set the RTC flash the ds3231 example code from the RTClib library.
+### Toolchain setup (Boards Manager)
 
-<img width="721" height="960" alt="image" src="https://github.com/user-attachments/assets/e808fa5e-4326-4846-820a-ba510504137b" />
+<img width="802" height="528" alt="Boards Manager"
+     src="https://github.com/user-attachments/assets/9ba3cf50-a338-421b-b639-3ce219a85c6a" />
 
+1. **Add Adafruit’s Board Manager URL**  
+   Arduino IDE → **File → Preferences → Additional Boards Manager URLs** → add:  
+2. **Install board package**  
+**Tools → Board → Boards Manager…** → search “Adafruit SAMD” → **Install**.
+3. **Select your board and port**  
+**Tools → Board** → choose your *Adafruit Feather M0* (or the specific SAMD board).  
+**Tools → Port** → choose the corresponding COM/tty device.
 
-<summary><strong>Troubleshooting (common flash/test issues)</strong></summary>
+---
+
+### Flash the firmware
+
+1. Open the sketch in Arduino IDE.  
+2. Verify the correct **Board** and **Port** (see above).  
+3. Click **Upload**. For first-time flashing or if upload fails, double-tap reset to enter bootloader mode and upload again.
+
+---
+
+### Set the RTC (DS3231)
+
+To initialize the clock, load **File → Examples → RTClib → ds3231** and upload. This sets the RTC using the sketch’s compile time.  
+For manual control, you can replace the `DateTime now` setup with a fixed value, e.g.:
+
+```cpp
+// In the RTClib ds3231 example, after rtc.begin():
+rtc.adjust(DateTime(2025, 10, 10, 12, 0, 0));  // YYYY, MM, DD, HH, MM, SS
+
 
 - On Feather M0/SAMD boards, ensure the correct board package is installed and the right COM port is selected.
 - If flashing fails mid-way, double-tap reset to enter bootloader mode and retry upload.
