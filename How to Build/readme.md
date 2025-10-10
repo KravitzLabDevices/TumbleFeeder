@@ -152,6 +152,14 @@ Jump to **7:19** in the **[Build Video](https://youtu.be/_t9MZKi8byM?feature=sha
 - **Adafruit SHARP Memory Display — `Adafruit_SharpMem.h`**  
   _by Adafruit_
 
+<img width="802" height="528" alt="image" src="https://github.com/user-attachments/assets/9ba3cf50-a338-421b-b639-3ce219a85c6a" />
+
+Paste the board managers URL into the section in the Preferences menu: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+
+To set the RTC flash the ds3231 example code from the RTClib library.
+
+<img width="721" height="960" alt="image" src="https://github.com/user-attachments/assets/e808fa5e-4326-4846-820a-ba510504137b" />
+
 
 <summary><strong>Troubleshooting (common flash/test issues)</strong></summary>
 
