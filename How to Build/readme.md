@@ -161,20 +161,16 @@ The firmware expects the following libraries:
 
 ### Flash the firmware
 
-1. Open the sketch in Arduino IDE.  
-2. Verify the correct **Board** and **Port** (see above).  
-3. Click **Upload**. For first-time flashing or if upload fails, double-tap reset to enter bootloader mode and upload again.
+1. Open the sketch in Arduino IDE.
+2. Plug your board into your computer via a micro USB cable and double-tap the reset button on the board.
+3. Verify the correct **Board** and **Port** (see above).  
+4. Click **Upload**. For first-time flashing or if the upload fails, double-tap reset to enter bootloader mode and upload again.
 
 ---
 
 ### Set the RTC (DS3231)
 
 To initialize the clock, load **File → Examples → RTClib → ds3231** and upload. This sets the RTC using the sketch’s compile time.  
-For manual control, you can replace the `DateTime now` setup with a fixed value, e.g.:
-
-```cpp
-// In the RTClib ds3231 example, after rtc.begin():
-rtc.adjust(DateTime(2025, 10, 10, 12, 0, 0));  // YYYY, MM, DD, HH, MM, SS
 
 
 - On Feather M0/SAMD boards, ensure the correct board package is installed and the right COM port is selected.
