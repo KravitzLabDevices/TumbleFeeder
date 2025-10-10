@@ -150,7 +150,7 @@ The firmware expects the following libraries:
      src="https://github.com/user-attachments/assets/9ba3cf50-a338-421b-b639-3ce219a85c6a" />
 
 1. **Add Adafruit’s Board Manager URL**  
-   Arduino IDE → **File → Preferences → Additional Boards Manager URLs** → add: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+   Arduino IDE → **File → Preferences → Additional Boards Manager URLs** → add: "https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"
 2. **Install board package**  
 **Tools → Board → Boards Manager…** → search “Adafruit SAMD” → **Install**.
 3. **Select your board and port**  
