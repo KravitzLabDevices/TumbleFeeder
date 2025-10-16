@@ -1,0 +1,3 @@
+//set clock
+void SetClock() {
+}
