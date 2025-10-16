@@ -19,8 +19,7 @@ void setup() {
      Run device
  *****************************************************************/
 void loop() {
+  checkProx();
   run();
-  LowPower.sleep(5000);
-  wake_counter++;
   update_display();
 }

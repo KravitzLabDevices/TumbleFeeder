@@ -78,7 +78,8 @@ void free_inputs(int closedpos, int openpos) {
       }  // Reset after logging
     }
   }
-  /********************************************************
+
+/********************************************************
   Check whether the mice touch the right button.
 ********************************************************/
   void checkRight() {

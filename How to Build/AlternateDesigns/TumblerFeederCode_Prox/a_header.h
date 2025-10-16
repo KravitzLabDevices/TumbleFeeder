@@ -11,6 +11,8 @@ SdFat SD;  //Make SdFat work with standard SD.h sketches
 #include <FlashStorage.h>
 #include "Adafruit_FreeTouch.h"
 #include <Adafruit_SharpMem.h>
+#include "Adafruit_VL6180X.h"
+
 
 /********************************************************
   Set up pins for the screen
@@ -77,6 +79,11 @@ Servo myservo;
 ********************************************************/
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+
+/********************************************************
+  Initialize Prox
+********************************************************/
+Adafruit_VL6180X vl = Adafruit_VL6180X();
 
 /********************************************************
   Set up datafile

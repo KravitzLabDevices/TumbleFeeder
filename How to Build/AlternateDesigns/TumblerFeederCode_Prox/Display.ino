@@ -587,7 +587,6 @@ void update_display() {
     }
   }
 
-
   display.refresh();
   inputtriggered = 0;
 }
