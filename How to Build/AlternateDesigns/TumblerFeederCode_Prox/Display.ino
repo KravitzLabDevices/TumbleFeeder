@@ -872,7 +872,7 @@ void update_display() {
   display.setCursor(12, 90);
   display.print("Opening: ");
   display.setCursor(80, 90);
-  display.print(FeederCount);  // Number of feeding events
+  display.print(OpenCount);  // Number of feeding events
   
   // Display battery indicator
   DisplayBattery();
@@ -1052,7 +1052,7 @@ void display_mouse() {
  * 
  * GRAPHIC LAYOUT:
  * ┌───────────┬─┐
- * │█████░░░░░│+│  Battery outline with bars and terminal
+ * │█████░░░░░ │+│  Battery outline with bars and terminal
  * └───────────┴─┘
  *     3.XX V        Voltage reading below
  * 

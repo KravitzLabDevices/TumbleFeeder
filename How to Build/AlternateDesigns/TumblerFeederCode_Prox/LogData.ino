@@ -11,7 +11,7 @@
  * 
  * CSV COLUMNS:
  * Timestamp, Temperature, ElapsedSecs, BatteryVoltage, DeviceNumber,
- * Approaches, FeedCount, FeedParadigm
+ * Approaches, OpenCount, FeedParadigm
  *****************************************************************/
 
 /*****************************************************************
@@ -51,7 +51,7 @@ void logData() {
  * 4. BatteryVoltage: Current LiPo voltage (V)
  * 5. DeviceNumber: Device ID (CSL variable, 0-19)
  * 6. Approaches: Cumulative proximity detection count
- * 7. FeedCount: Cumulative feeding event count
+ * 7. OpenCount: Cumulative feeding event count
  * 8. FeedParadigm: Either "FR#" (proximity mode) or "Free" (free feeding)
  * 
  * TIMESTAMP FORMAT:
@@ -101,7 +101,7 @@ void WriteToSD() {
   // Write cumulative event counters
   logfile.print(ApproachCount);
   logfile.print(",");
-  logfile.print(FeederCount);
+  logfile.print(OpenCount);
   logfile.print(",");
   
   // Write current feeding paradigm/mode
@@ -138,7 +138,7 @@ void WriteToSD() {
  * 
  * CSV HEADER:
  * Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,
- * Approaches,FeedCount,FeedParadigm
+ * Approaches,OpenCount,FeedParadigm
  *****************************************************************/
 bool fileCreated = false;  // Flag to prevent multiple file creation
 
@@ -164,7 +164,7 @@ void CreateFile() {
   }
 
   // Write CSV header row
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,Approaches,FeedCount,FeedParadigm");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,Approaches,OpenCount,FeedParadigm");
   logfile.flush();  // Ensure header is written immediately
   Serial.println("File created and header written.");
 

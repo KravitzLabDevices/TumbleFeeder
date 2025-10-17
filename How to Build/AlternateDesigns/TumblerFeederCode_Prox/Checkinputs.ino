@@ -54,7 +54,7 @@ void free_inputs(int closedpos, int openpos) {
       delay(1);  // Small delay to prevent tight loop
     }
     
-    FeederCount++;      // Increment feeding event counter
+    OpenCount++;      // Increment feeding event counter
     update_display();   // Update display with new count
     logData();          // Log event to SD card
     mouse_detected = 0; // Clear detection flag
@@ -103,7 +103,7 @@ void check_inputs(int closedpos, int openpos, unsigned long open_duration) {
 void checkMousePresent(int closedpos, int openpos, unsigned long open_duration) {
   if (mouse_detected == 1) {
     // Log the feeding opportunity
-    FeederCount++;
+    OpenCount++;
     update_display();
     logData();
     
@@ -160,7 +160,7 @@ void checkMousePresent(int closedpos, int openpos, unsigned long open_duration) 
  * - Increments counter and logs event
  * 
  * GLOBALS MODIFIED:
- * - FeederCount: Incremented for each touch
+ * - OpenCount: Incremented for each touch
  * - FeederDur: Set to touch duration in milliseconds
  * - feed_touch: Reset to 0 after processing
  *****************************************************************/
@@ -173,7 +173,7 @@ void checkFeeder() {
       delay(1);  // Small delay to prevent tight loop
     }
     
-    FeederCount++;                      // Increment touch counter
+    OpenCount++;                      // Increment touch counter
     FeederDur = millis() - startTime;   // Calculate touch duration in milliseconds
     update_display();                   // Update display with new count
 

@@ -65,7 +65,7 @@ Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 ********************************************************/
 // Event counters
 int ApproachCount = 0;                // Number of times mouse approached feeder
-int FeederCount = 0;                  // Number of feeding events/touches
+int OpenCount = 0;                  // Number of feeding events/touches
 int FeederDur = 0;                    // Duration of last feeder touch (milliseconds)
 
 // Proximity requirements
