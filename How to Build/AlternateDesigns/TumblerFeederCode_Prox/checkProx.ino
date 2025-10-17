@@ -1,6 +1,6 @@
 void checkProx() {
   // Don't check proximity if we're already processing a touch
-  if (left_touch == 1) {
+  if (mouse_detected == 1) {
     return;
   }
   
@@ -16,7 +16,8 @@ void checkProx() {
   if (range < 30) {
     Beep();
     Serial.println("Mouse detected.");
-    left_touch = 1;
+    mouse_detected = 1;
+    ApproachCount++;
 
     //start a timer
     unsigned long startProx = millis();
@@ -26,12 +27,12 @@ void checkProx() {
       uint8_t status = vl.readRangeStatus();
       Serial.print("Range: ");
       Serial.print(range);
-      Serial.print(", left_touch: ");
-      Serial.println(left_touch);
+      Serial.print(", mouse_detected: ");
+      Serial.println(mouse_detected);
       delay(100);
       //If mouse leaves feeder
       if (range > 29) {
-        left_touch = 0;
+        mouse_detected = 0;
         Serial.println ("Mouse left feeder!");
         break;
       }

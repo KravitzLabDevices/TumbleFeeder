@@ -19,8 +19,6 @@ void startup() {
   pinMode(A3, INPUT_PULLUP);  // red button
   pinMode(A5, INPUT_PULLUP);  // blue button
 
-  LowPower.attachInterruptWakeup(A0, right_interrupt, FALLING);
-  LowPower.attachInterruptWakeup(A2, left_interrupt, FALLING);
   LowPower.attachInterruptWakeup(A1, feed_interrupt, FALLING);
   LowPower.attachInterruptWakeup(A3, interrupt, CHANGE);
 

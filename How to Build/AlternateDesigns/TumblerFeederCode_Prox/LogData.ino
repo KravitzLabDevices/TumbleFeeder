@@ -9,9 +9,7 @@ void logData() {
 }
 
 /********************************************************
-  write datetime, current battery level, leftpoke count, left
-  poke duration, right poke count, right poke duration,
-  feed count, feed duration, feeding paradigm to sd
+  write data to sd
 ********************************************************/
 void WriteToSD() {
   DateTime now = rtc.now();
@@ -44,18 +42,9 @@ void WriteToSD() {
   logfile.print(CSL);
   logfile.print(",");
 
-  logfile.print(leftPokeCount);
+  logfile.print(ApproachCount);
   logfile.print(",");
-  logfile.print(leftPokeDur);
-  logfile.print(",");
-  logfile.print(rightPokeCount);
-  logfile.print(",");
-  logfile.print(rightPokeDur);
-  logfile.print(",");
-
   logfile.print(FeederCount);
-  logfile.print(",");
-  logfile.print(leftFeederDur);
   logfile.print(",");
   if (mode == 0) {
     logfile.print("FR");  // fr1
@@ -88,7 +77,7 @@ void CreateFile() {
   }
 
   // Write header
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,Approaches,FeedCount,FeedParadigm");
   logfile.flush();
   Serial.println("File created and header written.");
 

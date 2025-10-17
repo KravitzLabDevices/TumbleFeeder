@@ -33,17 +33,9 @@ Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 /********************************************************
   Initialize variables
 ********************************************************/
-unsigned long rightstart;
-unsigned long leftstart;
-int currentpos = 0;
-int leftPokeCount = 0;
-int rightPokeCount = 0;
-int leftPokeDur = 0;
-int rightPokeDur = 0;
+int ApproachCount = 0;
 int FeederCount = 0;
-int rightFeederCount = 0;
-int leftFeederDur = 0;
-int rightFeederDur = 0;
+int FeederDur = 0;
 int inputtriggered = 0;
 float measuredvbat;
 unsigned long menustart;
@@ -57,8 +49,7 @@ int closedpos = 150;
 int openpos = 0;
 int CSL;
 unsigned long open_duration = 60;
-int left_touch;
-int right_touch;
+int mouse_detected;
 int feed_touch;
 unsigned int wake_counter = 0;
 int on_hour;

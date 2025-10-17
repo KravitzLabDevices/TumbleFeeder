@@ -492,10 +492,7 @@ void setting_off_hour() {
 }
 
 /********************************************************
-  update display of the total number of left and right poke whenever left or right button
-  is pressed. during the 20s window proceeding the button press, the function will also update
-  on the number of feeding and feeding duration. the current battery level and
-  time elapsed is also displayed
+  update display of the total number of approaches and feed events
 *********************************************************/
 void update_display() {
   display.fillRect(0, 0, 168, 128, WHITE);  //clear screen
@@ -532,16 +529,12 @@ void update_display() {
   display.drawFastHLine(10, 70, 80, BLACK);
 
   display.setCursor(12, 78);
-  display.print("Left: ");
+  display.print("Approach: ");
   display.setCursor(80, 78);
-  display.print(leftPokeCount);
+  display.print(ApproachCount);
   display.setCursor(12, 90);
-  display.print("Right: ");
-  display.setCursor(80, 90);
-  display.print(rightPokeCount);
-  display.setCursor(12, 100);
   display.print("Feed: ");
-  display.setCursor(80, 100);
+  display.setCursor(80, 90);
   display.print(FeederCount);
 
   DisplayBattery();
