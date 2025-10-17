@@ -22,10 +22,10 @@ void display_current_params() {
   display.setCursor(12, 36);
   display.print("Mode: ");
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR");
+  mode == 1 ? display.print("Free") : display.print("Prox");
 
   display.setCursor(12, 48);
-  display.print("FR: ");
+  display.print("ProxTime: ");
   display.setCursor(80, 48);
   display.print(FR);
 
@@ -116,7 +116,7 @@ void set_feed_paradigm() {
 
   read_buttons();
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR");
+  mode == 1 ? display.print("Free") : display.print("Prox");
   display.refresh();
 
   if ((millis() - menustart) > 250) {
@@ -142,7 +142,7 @@ void set_feed_paradigm() {
     Beep();
     display.fillRect(80, 36, 25, 12, WHITE);
     display.setCursor(80, 36);
-    mode == 1 ? display.print("Free") : display.print("FR");
+    mode == 1 ? display.print("Free") : display.print("Prox");
     display.refresh();
     delay(100);
     endstate = true;
@@ -518,10 +518,10 @@ void update_display() {
   display.setCursor(12, 30);
   display.print("Mode: ");
   display.setCursor(80, 30);
-  mode == 1 ? display.print("Free") : display.print("FR");
+  mode == 1 ? display.print("Free") : display.print("Prox");
 
   display.setCursor(12, 42);
-  display.print("FR: ");
+  display.print("ProxTime: ");
   display.setCursor(80, 42);
   display.print(FR);
   display.setCursor(12, 56);
