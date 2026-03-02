@@ -1,0 +1,54 @@
+#######################################
+# Syntax Coloring Map For TumbleFeeder
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TumbleFeeder	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+run	KEYWORD2
+setFR	KEYWORD2
+setOpenDuration	KEYWORD2
+setPositions	KEYWORD2
+setDeviceNumber	KEYWORD2
+setMode	KEYWORD2
+feederOpen	KEYWORD2
+feederClose	KEYWORD2
+shakeFood	KEYWORD2
+shake	KEYWORD2
+resetCounts	KEYWORD2
+enableSleep	KEYWORD2
+disableSleep	KEYWORD2
+
+#######################################
+# Variables (KEYWORD2)
+#######################################
+
+leftPokeCount	KEYWORD2
+rightPokeCount	KEYWORD2
+FeederCount	KEYWORD2
+leftPokeDur	KEYWORD2
+rightPokeDur	KEYWORD2
+leftFeederDur	KEYWORD2
+FR	KEYWORD2
+mode	KEYWORD2
+deviceNumber	KEYWORD2
+closedpos	KEYWORD2
+openpos	KEYWORD2
+open_duration	KEYWORD2
+measuredvbat	KEYWORD2
+display	KEYWORD2
+rtc	KEYWORD2
+SD	KEYWORD2
+logfile	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
