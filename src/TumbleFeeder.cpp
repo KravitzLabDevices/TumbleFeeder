@@ -94,6 +94,11 @@ void TumbleFeeder::begin() {
   LowPower.attachInterruptWakeup(digitalPinToInterrupt(RED_BUTTON), _wakeISR, CHANGE);
   
   /********************************************************
+    Program Select
+  ********************************************************/
+  _programSelect();
+
+  /********************************************************
     Startup Menu
   ********************************************************/
   while (!_SessionStarted) {
@@ -119,12 +124,21 @@ void TumbleFeeder::run() {
     if (mode == 0) {
       // FR mode
       _checkInputs();
-    } 
+    }
     else if (mode == 1) {
       // Free feeding mode
       _freeInputs();
-      
-      // Periodic shake in free mode
+      if (_wake_counter % 180 == 0) {
+        shakeFood();
+      }
+    }
+    else if (mode == 2) {
+      // FR Extend mode
+      _checkInputs();
+    }
+    else if (mode == 3) {
+      // Free Terminate mode
+      _freeTerminateInputs();
       if (_wake_counter % 180 == 0) {
         shakeFood();
       }
@@ -213,22 +227,31 @@ void TumbleFeeder::_checkLeft() {
     // Check if FR condition is met
     if (FR > 0 && leftPokeCount % FR == 0) {
       feederOpen();
-      unsigned long feederStart = millis();
-      
+      unsigned long openEnd = millis() + (open_duration * 1000);
+
       // Keep feeder open for specified duration
-      while (millis() - feederStart < (open_duration * 1000)) {
-        _checkFeeder();  // Check for feeder touches during open period
-        
+      while (millis() < openEnd) {
+        // FR Extend: feedtouch adds 10s to the timer
+        if (mode == 2 && _feedTouch) {
+          unsigned long startTime;
+          _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+          openEnd += 10000;
+          _logData();
+          _feedTouch = false;
+          leftFeederDur = 0;
+        } else {
+          _checkFeeder();
+        }
+
         // Display remaining time
-        // Clear timer area with LARGER rectangle so numbers don't overlap
         display.fillRect(122, 36, 46, 36, WHITE);
         display.setCursor(122, 48);
         display.println("Feeding");
         display.setCursor(122, 60);
-        display.print(((open_duration * 1000) - (millis() - feederStart)) / 1000);
+        display.print((openEnd - millis()) / 1000);
         display.refresh();
       }
-      
+
       display.fillRect(122, 36, 46, 36, WHITE);
       feederClose();
       _updateDisplay();  // Update full display after feeding
@@ -286,6 +309,44 @@ void TumbleFeeder::_freeInputs() {
     
     _leftTouch = false;
     leftPokeDur = 0;
+  }
+}
+
+// Free Terminate mode - feedtouch closes feeder for 60s then reopens
+void TumbleFeeder::_freeTerminateInputs() {
+  _checkRight();
+
+  // Left poke - log only, no reward
+  if (_leftTouch) {
+    unsigned long startTime;
+    _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+    _updateDisplay();
+    _logData();
+    _leftTouch = false;
+    leftPokeDur = 0;
+  }
+
+  // Feedtouch - close feeder for 60s then reopen
+  if (_feedTouch) {
+    unsigned long startTime;
+    _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+    _logData();
+    _feedTouch = false;
+    leftFeederDur = 0;
+
+    feederClose();
+    unsigned long closeStart = millis();
+    while (millis() - closeStart < 60000) {
+      display.fillRect(122, 36, 46, 36, WHITE);
+      display.setCursor(122, 48);
+      display.println("Closed");
+      display.setCursor(122, 60);
+      display.print((60000 - (millis() - closeStart)) / 1000);
+      display.refresh();
+    }
+    feederOpen();
+    display.fillRect(122, 36, 46, 36, WHITE);
+    _updateDisplay();
   }
 }
 
@@ -409,12 +470,17 @@ void TumbleFeeder::_updateDisplay() {
     display.setCursor(12, 30);
     display.print("Mode: ");
     display.setCursor(80, 30);
-    mode == 1 ? display.print("Free") : display.print("FR");
-    
-    display.setCursor(12, 42);
-    display.print("FR: ");
-    display.setCursor(80, 42);
-    display.print(FR);
+    if (mode == 0)      display.print("FR");
+    else if (mode == 1) display.print("Free");
+    else if (mode == 2) display.print("FR Ext");
+    else if (mode == 3) display.print("FreeTrm");
+
+    if (mode == 0 || mode == 2) {
+      display.setCursor(12, 42);
+      display.print("FR: ");
+      display.setCursor(80, 42);
+      display.print(FR);
+    }
     
     display.setCursor(12, 56);
     display.print("Device#: ");
@@ -571,6 +637,79 @@ void TumbleFeeder::_displaySDError() {
                                                                                     Startup Menu Methods
 **************************************************************************************************************************************************/
 
+void TumbleFeeder::_programSelect() {
+  // Map current mode to selection index
+  int selection;
+  if      (mode == 1) selection = 0;
+  else if (mode == 0) selection = 1;
+  else if (mode == 2) selection = 2;
+  else                selection = 3;
+
+  bool confirmed = false;
+
+  while (!confirmed) {
+    _readButtons();
+
+    display.fillRect(0, 0, 168, 144, WHITE);
+
+    // Title
+    display.setCursor(20, 14);
+    display.println("Select Program:");
+    display.setCursor(21, 14);
+    display.println("Select Program:");
+    display.drawRect(5, 5, 158, 25, BLACK);
+    display.drawRect(4, 4, 160, 27, BLACK);
+
+    // Program options
+    const char* labels[4] = {
+      "1. Free Feeding",
+      "2. Fixed Ratio",
+      "3. FR Extend",
+      "4. Free Terminate"
+    };
+    int yPos[4] = {36, 50, 64, 78};
+
+    for (int i = 0; i < 4; i++) {
+      display.setCursor(20, yPos[i]);
+      if (selection == i) {
+        display.fillRect(14, yPos[i] - 6, 150, 13, BLACK);
+        display.setTextColor(WHITE);
+        display.println(labels[i]);
+        display.setTextColor(BLACK);
+      } else {
+        display.println(labels[i]);
+      }
+    }
+
+    // Button labels
+    display.setCursor(20, 100);
+    display.println("[Red]  = cycle");
+    display.setCursor(20, 112);
+    display.println("[Blue] = confirm");
+
+    display.refresh();
+
+    // Red = cycle through options
+    if (_redTouch == 0) {
+      _beep();
+      selection = (selection + 1) % 4;
+      delay(200);
+    }
+
+    // Blue = confirm
+    if (_blueTouch == 0) {
+      _beep();
+      // Map selection back to mode
+      if      (selection == 0) mode = 1;
+      else if (selection == 1) mode = 0;
+      else if (selection == 2) mode = 2;
+      else                     mode = 3;
+      confirmed = true;
+      delay(200);
+    }
+  }
+}
+
 void TumbleFeeder::_displayCurrentParams() {
   display.fillRect(0, 0, 168, 128, WHITE);
   
@@ -599,18 +738,23 @@ void TumbleFeeder::_displayCurrentParams() {
   display.setCursor(12, 36);
   display.print("Mode: ");
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR");
-  
-  display.setCursor(12, 48);
-  display.print("FR: ");
-  display.setCursor(80, 48);
-  display.print(FR);
-  
+  if (mode == 0)      display.print("FR");
+  else if (mode == 1) display.print("Free");
+  else if (mode == 2) display.print("FR Ext");
+  else if (mode == 3) display.print("FreeTrm");
+
+  if (mode == 0 || mode == 2) {
+    display.setCursor(12, 48);
+    display.print("FR: ");
+    display.setCursor(80, 48);
+    display.print(FR);
+  }
+
   display.setCursor(12, 60);
   display.print("Device#: ");
   display.setCursor(80, 60);
   display.print(deviceNumber);
-  
+
   display.setCursor(12, 72);
   display.print("Sec open: ");
   display.setCursor(80, 72);
@@ -696,7 +840,10 @@ void TumbleFeeder::_setFeedParadigm() {
   
   _readButtons();
   display.setCursor(80, 36);
-  mode == 1 ? display.print("Free") : display.print("FR");
+  if (mode == 0)      display.print("FR");
+  else if (mode == 1) display.print("Free");
+  else if (mode == 2) display.print("FR Ext");
+  else if (mode == 3) display.print("FreeTrm");
   display.refresh();
   
   if ((millis() - _menustart) > 250) {
@@ -706,10 +853,10 @@ void TumbleFeeder::_setFeedParadigm() {
     _menustart = millis();
   }
   
-  // Toggle mode with red button
+  // Toggle mode with red button (cycles through all 4)
   if (_redTouch == 0) {
     _beep();
-    mode = (mode == 0) ? 1 : 0;
+    mode = (mode + 1) % 4;
     delay(200);
   }
   
@@ -718,11 +865,18 @@ void TumbleFeeder::_setFeedParadigm() {
     _beep();
     display.fillRect(80, 36, 25, 12, WHITE);
     display.setCursor(80, 36);
-    mode == 1 ? display.print("Free") : display.print("FR");
+    if (mode == 0)      display.print("FR");
+    else if (mode == 1) display.print("Free");
+    else if (mode == 2) display.print("FR Ext");
+    else if (mode == 3) display.print("FreeTrm");
     display.refresh();
     delay(100);
     _endstate = true;
-    _settingFR();
+    if (mode == 1 || mode == 3) {
+      _settingDeviceNum();  // Skip FR setting for free-type modes
+    } else {
+      _settingFR();
+    }
   }
   
   // Back with green button
@@ -1084,8 +1238,13 @@ void TumbleFeeder::_writeToSD() {
   if (mode == 0) {
     logfile.print("FR");
     logfile.println(FR);
-  } else {
+  } else if (mode == 1) {
     logfile.println("Free");
+  } else if (mode == 2) {
+    logfile.print("FRExtend");
+    logfile.println(FR);
+  } else if (mode == 3) {
+    logfile.println("FreeTerminate");
   }
 }
 

@@ -150,6 +150,7 @@ class TumbleFeeder {
     void _checkFeeder();
     void _checkInputs();
     void _freeInputs();
+    void _freeTerminateInputs();
     void _readTouchPin(int pin, unsigned long &startTime, int &count, int &duration);
     
     // Display methods
@@ -161,6 +162,7 @@ class TumbleFeeder {
     void _readBatteryLevel();
     
     // Menu methods
+    void _programSelect();
     void _startupMenu();
     void _setFeedParadigm();
     void _settingFR();
