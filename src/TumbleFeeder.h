@@ -162,7 +162,7 @@ class TumbleFeeder {
     void _readBatteryLevel();
     
     // Menu methods
-    void _programSelect();
+    void _drawSettingsBase();
     void _startupMenu();
     void _setFeedParadigm();
     void _settingFR();
