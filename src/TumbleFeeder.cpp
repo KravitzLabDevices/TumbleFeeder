@@ -484,8 +484,8 @@ void TumbleFeeder::_updateDisplay() {
     display.setCursor(80, 30);
     if (mode == 0)      display.print("FR");
     else if (mode == 1) display.print("Free");
-    else if (mode == 2) display.print("FR Ext");
-    else if (mode == 3) display.print("FreeTrm");
+    else if (mode == 2) display.print("FRxt");
+    else if (mode == 3) display.print("FrTm");
 
     if (mode == 0 || mode == 2) {
       display.setCursor(12, 42);
@@ -679,7 +679,6 @@ void TumbleFeeder::_drawSettingsBase() {
   display.print("Open Pos: ");
   display.setCursor(12, 96);
   display.print("Close Pos: ");
-  _displayBattery();
   display.refresh();
 }
 
@@ -803,50 +802,45 @@ void TumbleFeeder::_setFeedParadigm() {
     "3. FR Extend",
     "4. Free Term."
   };
-  int yPos[4] = {38, 52, 66, 80};
 
-  while (true) {
+  _endstate = false;
+
+  // Set up button labels in right column (no battery in edit menu)
+  display.fillRect(112, 0, 56, 128, WHITE);
+  display.setCursor(134, 20);
+  display.println("Back");
+  display.setCursor(135, 20);
+  display.println("Back");
+  display.setCursor(134, 60);
+  display.println("Next");
+  display.setCursor(135, 60);
+  display.println("Next");
+  display.setCursor(130, 100);
+  display.println("Cycle");
+  display.setCursor(131, 100);
+  display.println("Cycle");
+  display.refresh();
+
+  while (!_endstate) {
     _readButtons();
 
-    display.fillRect(0, 0, 168, 128, WHITE);
-
-    // Left panel - program list
-    display.drawRect(5, 5, 104, 25, BLACK);
-    display.setCursor(16, 14);
-    display.println("Select Program:");
-    display.setCursor(17, 14);
-    display.println("Select Program:");
-    display.drawRect(5, 5, 104, 110, BLACK);
-    display.drawRect(2, 2, 110, 116, BLACK);
-
-    for (int i = 0; i < 4; i++) {
-      display.setCursor(10, yPos[i]);
-      if (selection == i) {
-        display.fillRect(6, yPos[i] - 6, 106, 13, BLACK);
-        display.setTextColor(WHITE);
-        display.println(labels[i]);
-        display.setTextColor(BLACK);
-      } else {
-        display.println(labels[i]);
-      }
-    }
-
-    // Right column (below battery area)
-    display.setCursor(118, 44);
-    display.println("Back");
-    display.setCursor(119, 44);
-    display.println("Back");
-    display.setCursor(118, 74);
-    display.println("Next");
-    display.setCursor(119, 74);
-    display.println("Next");
-    display.setCursor(116, 104);
-    display.println("Cycle");
-    display.setCursor(117, 104);
-    display.println("Cycle");
-
-    _displayBattery();
+    // Show highlighted program name spanning the full Mode row
+    display.fillRect(6, 30, 106, 14, BLACK);
+    display.setTextColor(WHITE);
+    display.setCursor(10, 36);
+    display.print(labels[selection]);
+    display.setTextColor(BLACK);
     display.refresh();
+
+    // Blink
+    if ((millis() - _menustart) > 250) {
+      display.fillRect(6, 30, 106, 14, WHITE);
+      display.setCursor(10, 36);
+      display.print(labels[selection]);
+      display.refresh();
+      delay(5);
+      _menustart = millis();
+    }
 
     // Red = cycle
     if (_redTouch == 0) {
@@ -855,45 +849,46 @@ void TumbleFeeder::_setFeedParadigm() {
       delay(200);
     }
 
-    // Blue = Next (confirm and proceed)
+    // Blue = confirm
     if (_blueTouch == 0) {
       _beep();
       if      (selection == 0) mode = 1;
       else if (selection == 1) mode = 0;
       else if (selection == 2) mode = 2;
       else                     mode = 3;
+      _endstate = true;
       delay(100);
-
-      // Restore settings background for next setting function
-      _drawSettingsBase();
-      display.setCursor(134, 20);
-      display.println("Back");
-      display.setCursor(135, 20);
-      display.println("Back");
-      display.setCursor(134, 60);
-      display.println("Next");
-      display.setCursor(135, 60);
-      display.println("Next");
-      display.setCursor(134, 100);
-      display.println("Edit");
-      display.setCursor(135, 100);
-      display.println("Edit");
-      display.refresh();
-
-      if (mode == 1 || mode == 3) {
-        _settingDeviceNum();
-      } else {
-        _settingFR();
-      }
-      return;
     }
 
-    // Green = Back
+    // Green = back
     if (_greenTouch == 0) {
       _beep();
+      _endstate = true;
       _displayCurrentParams();
       return;
     }
+  }
+
+  // Redraw settings base (mode may have changed - FR row needs to appear/disappear)
+  _drawSettingsBase();
+  display.setCursor(134, 20);
+  display.println("Back");
+  display.setCursor(135, 20);
+  display.println("Back");
+  display.setCursor(134, 60);
+  display.println("Next");
+  display.setCursor(135, 60);
+  display.println("Next");
+  display.setCursor(134, 100);
+  display.println("Edit");
+  display.setCursor(135, 100);
+  display.println("Edit");
+  display.refresh();
+
+  if (mode == 1 || mode == 3) {
+    _settingDeviceNum();
+  } else {
+    _settingFR();
   }
 }
 
@@ -1120,7 +1115,19 @@ void TumbleFeeder::_settingOpenPosition() {
 
 void TumbleFeeder::_settingClosedPosition() {
   _endstate = false;
-  
+
+  // Update button labels for this screen
+  display.fillRect(112, 0, 56, 128, WHITE);
+  display.setCursor(115, 20);
+  display.println("Decrease");
+  display.setCursor(116, 20);
+  display.println("Decrease");
+  display.setCursor(115, 100);
+  display.println("Increase");
+  display.setCursor(116, 100);
+  display.println("Increase");
+  display.refresh();
+
   while (!_endstate) {
     _readButtons();
     display.setCursor(80, 96);
