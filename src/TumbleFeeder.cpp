@@ -223,17 +223,24 @@ void TumbleFeeder::_checkLeft() {
     if (FR > 0 && leftPokeCount % FR == 0) {
       feederOpen();
       unsigned long openStart = millis();
-      unsigned long lastTouchTime = openStart;
-      // closeTime = max(minimum open_duration, last touch + 30s)
-      unsigned long closeTime = openStart + (open_duration * 1000UL);
+      unsigned long feedingEnd   = openStart + (open_duration * 1000UL);
+      unsigned long extensionEnd = openStart + 30000UL;
 
-      while (millis() < closeTime) {
+      while (true) {
+        unsigned long nowMs = millis();
+        bool feedDone = (nowMs >= feedingEnd);
+        bool extDone  = (nowMs >= extensionEnd);
+
+        if (mode == 2) {
+          if (feedDone && extDone) break;
+        } else {
+          if (feedDone) break;
+        }
+
         if (mode == 2 && _feedTouch) {
           unsigned long startTime;
           _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
-          lastTouchTime = millis();
-          unsigned long newClose = lastTouchTime + 30000UL;
-          if (newClose > closeTime) closeTime = newClose;
+          extensionEnd = millis() + 30000UL;
           _logData();
           _feedTouch = false;
           leftFeederDur = 0;
@@ -241,18 +248,30 @@ void TumbleFeeder::_checkLeft() {
           _checkFeeder();
         }
 
-        // Display remaining time
-        display.fillRect(122, 36, 46, 36, WHITE);
+        // Display timers
+        display.fillRect(122, 36, 46, 60, WHITE);
         display.setCursor(122, 48);
         display.println("Feeding");
+        long feedRemain = ((long)feedingEnd - (long)millis()) / 1000;
+        if (feedRemain < 0) feedRemain = 0;
         display.setCursor(122, 60);
-        display.print((closeTime - millis()) / 1000);
+        display.print(feedRemain);
+
+        if (mode == 2) {
+          display.setCursor(122, 72);
+          display.println("Extensn");
+          long extRemain = ((long)extensionEnd - (long)millis()) / 1000;
+          if (extRemain < 0) extRemain = 0;
+          display.setCursor(122, 84);
+          display.print(extRemain);
+        }
+
         display.refresh();
       }
 
-      display.fillRect(122, 36, 46, 36, WHITE);
+      display.fillRect(122, 36, 46, 60, WHITE);
       feederClose();
-      _updateDisplay();  // Update full display after feeding
+      _updateDisplay();
     }
   }
 }
@@ -664,8 +683,8 @@ void TumbleFeeder::_drawSettingsBase() {
   display.setCursor(80, 36);
   if (mode == 0)      display.print("FR");
   else if (mode == 1) display.print("Free");
-  else if (mode == 2) display.print("FR Ext");
-  else if (mode == 3) display.print("FreeTrm");
+  else if (mode == 2) display.print("FRxt");
+  else if (mode == 3) display.print("FrTm");
 
   if (mode == 0 || mode == 2) {
     display.setCursor(12, 48);
@@ -712,8 +731,8 @@ void TumbleFeeder::_displayCurrentParams() {
   display.setCursor(80, 36);
   if (mode == 0)      display.print("FR");
   else if (mode == 1) display.print("Free");
-  else if (mode == 2) display.print("FR Ext");
-  else if (mode == 3) display.print("FreeTrm");
+  else if (mode == 2) display.print("FRxt");
+  else if (mode == 3) display.print("FrTm");
 
   if (mode == 0 || mode == 2) {
     display.setCursor(12, 48);
@@ -796,47 +815,30 @@ void TumbleFeeder::_setFeedParadigm() {
   else if (mode == 2) selection = 2;
   else                selection = 3;
 
-  const char* labels[4] = {
-    "1. Free Feeding",
-    "2. Fixed Ratio",
-    "3. FR Extend",
-    "4. Free Term."
-  };
+  const char* abbrevs[4] = {"Free", "FR", "FRxt", "FrTm"};
 
   _endstate = false;
 
   // Set up button labels in right column (no battery in edit menu)
   display.fillRect(112, 0, 56, 128, WHITE);
-  display.setCursor(134, 20);
-  display.println("Back");
-  display.setCursor(135, 20);
-  display.println("Back");
-  display.setCursor(134, 60);
-  display.println("Next");
-  display.setCursor(135, 60);
-  display.println("Next");
-  display.setCursor(130, 100);
-  display.println("Cycle");
-  display.setCursor(131, 100);
-  display.println("Cycle");
+  display.setCursor(134, 20); display.println("Back");
+  display.setCursor(135, 20); display.println("Back");
+  display.setCursor(134, 60); display.println("Next");
+  display.setCursor(135, 60); display.println("Next");
+  display.setCursor(130, 100); display.println("Cycle");
+  display.setCursor(131, 100); display.println("Cycle");
   display.refresh();
 
   while (!_endstate) {
     _readButtons();
 
-    // Show highlighted program name spanning the full Mode row
-    display.fillRect(6, 30, 106, 14, BLACK);
-    display.setTextColor(WHITE);
-    display.setCursor(10, 36);
-    display.print(labels[selection]);
-    display.setTextColor(BLACK);
+    // Blink value at value column (x=80), matching DeviceNum style
+    display.setCursor(80, 36);
+    display.print(abbrevs[selection]);
     display.refresh();
 
-    // Blink
     if ((millis() - _menustart) > 250) {
-      display.fillRect(6, 30, 106, 14, WHITE);
-      display.setCursor(10, 36);
-      display.print(labels[selection]);
+      display.fillRect(80, 30, 35, 14, WHITE);
       display.refresh();
       delay(5);
       _menustart = millis();
@@ -846,10 +848,27 @@ void TumbleFeeder::_setFeedParadigm() {
     if (_redTouch == 0) {
       _beep();
       selection = (selection + 1) % 4;
+      // Update mode immediately so FR row can refresh if needed
+      int prevMode = mode;
+      if      (selection == 0) mode = 1;
+      else if (selection == 1) mode = 0;
+      else if (selection == 2) mode = 2;
+      else                     mode = 3;
+      // Redraw base if FR row visibility changed
+      if ((prevMode == 0 || prevMode == 2) != (mode == 0 || mode == 2)) {
+        _drawSettingsBase();
+        display.fillRect(112, 0, 56, 128, WHITE);
+        display.setCursor(134, 20); display.println("Back");
+        display.setCursor(135, 20); display.println("Back");
+        display.setCursor(134, 60); display.println("Next");
+        display.setCursor(135, 60); display.println("Next");
+        display.setCursor(130, 100); display.println("Cycle");
+        display.setCursor(131, 100); display.println("Cycle");
+      }
       delay(200);
     }
 
-    // Blue = confirm
+    // Blue = confirm + proceed
     if (_blueTouch == 0) {
       _beep();
       if      (selection == 0) mode = 1;
@@ -1126,6 +1145,10 @@ void TumbleFeeder::_settingClosedPosition() {
   display.println("Increase");
   display.setCursor(116, 100);
   display.println("Increase");
+  display.setCursor(134, 60);
+  display.println("Save");
+  display.setCursor(135, 60);
+  display.println("Save");
   display.refresh();
 
   while (!_endstate) {
