@@ -348,12 +348,31 @@ void TumbleFeeder::_freeTerminateInputs() {
     unsigned long startTime;
     _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
     _logData();
+    _updateDisplay();  // Show updated FeederCount immediately
     _feedTouch = false;
     leftFeederDur = 0;
 
+    // Helper lambda to draw countdown overlay after _updateDisplay()
     // Countdown to close (feeder still open)
     unsigned long warningStart = millis();
     while (millis() - warningStart < 60000) {
+      // Check and log any touches during countdown
+      _checkRight();
+      if (_leftTouch) {
+        _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+        _logData();
+        _leftTouch = false;
+        leftPokeDur = 0;
+      }
+      if (_feedTouch) {
+        _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+        _logData();
+        _feedTouch = false;
+        leftFeederDur = 0;
+      }
+
+      // Redraw base display (updates counts), then overlay timer
+      _updateDisplay();
       display.fillRect(122, 36, 46, 36, WHITE);
       display.setCursor(122, 48);
       display.println("Closing");
@@ -367,6 +386,23 @@ void TumbleFeeder::_freeTerminateInputs() {
     // Closed period
     unsigned long closeStart = millis();
     while (millis() - closeStart < 60000) {
+      // Check and log any touches during closed period
+      _checkRight();
+      if (_leftTouch) {
+        _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+        _logData();
+        _leftTouch = false;
+        leftPokeDur = 0;
+      }
+      if (_feedTouch) {
+        _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+        _logData();
+        _feedTouch = false;
+        leftFeederDur = 0;
+      }
+
+      // Redraw base display (updates counts), then overlay timer
+      _updateDisplay();
       display.fillRect(122, 36, 46, 36, WHITE);
       display.setCursor(122, 48);
       display.println("Closed");
