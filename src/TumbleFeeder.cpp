@@ -356,28 +356,37 @@ void TumbleFeeder::_freeTerminateInputs() {
     // Countdown to close (feeder still open)
     unsigned long warningStart = millis();
     while (millis() - warningStart < 60000) {
-      // Check and log any touches during countdown
-      _checkRight();
+      bool touched = false;
+      if (_rightTouch) {
+        _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+        _logData();
+        _rightTouch = false;
+        rightPokeDur = 0;
+        touched = true;
+      }
       if (_leftTouch) {
         _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
         _logData();
         _leftTouch = false;
         leftPokeDur = 0;
+        touched = true;
       }
       if (_feedTouch) {
         _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
         _logData();
         _feedTouch = false;
         leftFeederDur = 0;
+        touched = true;
       }
 
-      // Redraw base display (updates counts), then overlay timer
-      _updateDisplay();
+      if (touched) _updateDisplay();
+      long remain = 60 - (long)(millis() - warningStart) / 1000;
+      if (remain < 0) remain = 0;
       display.fillRect(122, 36, 46, 36, WHITE);
       display.setCursor(122, 48);
       display.println("Closing");
       display.setCursor(122, 60);
-      display.print((60000 - (millis() - warningStart)) / 1000);
+      display.print(remain);
       display.refresh();
     }
 
@@ -386,28 +395,37 @@ void TumbleFeeder::_freeTerminateInputs() {
     // Closed period
     unsigned long closeStart = millis();
     while (millis() - closeStart < 60000) {
-      // Check and log any touches during closed period
-      _checkRight();
+      bool touched = false;
+      if (_rightTouch) {
+        _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+        _logData();
+        _rightTouch = false;
+        rightPokeDur = 0;
+        touched = true;
+      }
       if (_leftTouch) {
         _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
         _logData();
         _leftTouch = false;
         leftPokeDur = 0;
+        touched = true;
       }
       if (_feedTouch) {
         _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
         _logData();
         _feedTouch = false;
         leftFeederDur = 0;
+        touched = true;
       }
 
-      // Redraw base display (updates counts), then overlay timer
-      _updateDisplay();
+      if (touched) _updateDisplay();
+      long remain = 60 - (long)(millis() - closeStart) / 1000;
+      if (remain < 0) remain = 0;
       display.fillRect(122, 36, 46, 36, WHITE);
       display.setCursor(122, 48);
       display.println("Closed");
       display.setCursor(122, 60);
-      display.print((60000 - (millis() - closeStart)) / 1000);
+      display.print(remain);
       display.refresh();
     }
 
