@@ -390,6 +390,9 @@ void TumbleFeeder::_freeTerminateInputs() {
       display.refresh();
     }
 
+    _pendingEvent = "Closing";
+    _logData();
+
     feederClose();
 
     // Closed period
@@ -428,6 +431,9 @@ void TumbleFeeder::_freeTerminateInputs() {
       display.print(remain);
       display.refresh();
     }
+
+    _pendingEvent = "Opening";
+    _logData();
 
     feederOpen();
     display.fillRect(122, 36, 46, 36, WHITE);
@@ -1327,6 +1333,9 @@ void TumbleFeeder::_writeToSD() {
   logfile.print(",");
   logfile.print(leftFeederDur);
   logfile.print(",");
+  logfile.print(_pendingEvent);
+  logfile.print(",");
+  _pendingEvent = "";
   if (mode == 0) {
     logfile.print("FR");
     logfile.println(FR);
@@ -1358,7 +1367,7 @@ void TumbleFeeder::_createFile() {
   }
   
   // Write header
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,FeedParadigm");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,Event,FeedParadigm");
   logfile.flush();
   Serial.println("File created and header written.");
 }

@@ -122,6 +122,9 @@ class TumbleFeeder {
     bool _blueTouch;
     void _readButtons();
     
+    // Free termination event tracking
+    String _pendingEvent;
+
     // Session state
     bool _SessionStarted;
     unsigned long _menustart;
