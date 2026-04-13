@@ -29,12 +29,18 @@ TumbleFeeder::TumbleFeeder() {
   
   // Default configuration
   FR = 1;
+  proxDuration = 3;
   mode = 0;  // FR mode
   deviceNumber = 0;
   closedpos = 150;
   openpos = 0;
   open_duration = 60;
-  
+
+  // Proximity lockout state
+  _requireClear = false;
+  _lastFeedEnd = 0;
+  _awayStart = 0;
+
   // Session state
   _SessionStarted = false;
   _endstate = false;
@@ -85,6 +91,14 @@ void TumbleFeeder::begin() {
   _createFile();
   _createPos();  // Load saved positions and settings
   
+  /********************************************************
+    Initialize Proximity Sensor (mode 4 only)
+  ********************************************************/
+  if (mode == 4) {
+    Wire.begin();
+    _vl.begin();
+  }
+
   /********************************************************
     Attach Interrupts
   ********************************************************/
@@ -137,6 +151,10 @@ void TumbleFeeder::run() {
       if (_wake_counter % 180 == 0) {
         shakeFood();
       }
+    }
+    else if (mode == 4) {
+      // Proximity mode
+      _proxInputs();
     }
     
     _next_interval = current + _display_interval;
@@ -486,6 +504,126 @@ void TumbleFeeder::shakeFood() {
   _logData();
 }
 
+// Proximity mode — mouse must hold near sensor for proxDuration seconds to open feeder
+void TumbleFeeder::_proxInputs() {
+  static const uint8_t ENTER_MM = 28;
+  static const uint8_t EXIT_MM  = 32;
+  static const unsigned long LEAVE_CLEAR_MS = 1500;
+
+  unsigned long startTime;
+
+  // Always check left/right pokes
+  if (_rightTouch) {
+    _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+    _logData();
+    _rightTouch = false;
+    rightPokeDur = 0;
+  }
+  if (_leftTouch) {
+    _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+    _logData();
+    _leftTouch = false;
+    leftPokeDur = 0;
+  }
+
+  // Lockout: wait for mouse to fully leave before re-arming
+  if (_requireClear) {
+    uint8_t range  = _vl.readRange();
+    uint8_t status = _vl.readRangeStatus();
+    if (status == VL6180X_ERROR_NONE && range > EXIT_MM) {
+      if (_awayStart == 0) _awayStart = millis();
+      if (millis() - _awayStart >= LEAVE_CLEAR_MS) {
+        _requireClear = false;
+        _awayStart    = 0;
+      }
+    } else {
+      _awayStart = 0;
+    }
+    return;
+  }
+
+  // Read sensor
+  uint8_t range  = _vl.readRange();
+  uint8_t status = _vl.readRangeStatus();
+  if (status != VL6180X_ERROR_NONE || range >= ENTER_MM) return;
+
+  // Mouse detected — log event and start hold timer
+  _pendingEvent = "Detected";
+  _logData();
+
+  unsigned long holdStart = millis();
+  while (millis() - holdStart < (unsigned long)proxDuration * 1000UL) {
+    uint8_t r = _vl.readRange();
+    uint8_t s = _vl.readRangeStatus();
+
+    // Show hold countdown on display
+    unsigned long remain = ((unsigned long)proxDuration * 1000UL - (millis() - holdStart)) / 1000 + 1;
+    display.fillRect(122, 48, 46, 24, WHITE);
+    display.setCursor(122, 48);
+    display.print("Hold:");
+    display.setCursor(122, 60);
+    display.print(remain);
+    display.refresh();
+
+    if (s == VL6180X_ERROR_NONE && r > EXIT_MM) {
+      // Mouse left before hold was met — cancel
+      display.fillRect(122, 48, 46, 24, WHITE);
+      _updateDisplay();
+      return;
+    }
+    delay(100);
+  }
+
+  // Hold requirement met — open feeder
+  _pendingEvent = "Opening";
+  _logData();
+  feederOpen();
+
+  // Open duration countdown
+  unsigned long openStart = millis();
+  while (millis() - openStart < open_duration * 1000UL) {
+    if (_rightTouch) {
+      _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+      _logData();
+      _rightTouch = false;
+      rightPokeDur = 0;
+    }
+    if (_leftTouch) {
+      _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+      _logData();
+      _leftTouch = false;
+      leftPokeDur = 0;
+    }
+    if (_feedTouch) {
+      _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+      _logData();
+      _feedTouch = false;
+      leftFeederDur = 0;
+    }
+
+    // Countdown display
+    unsigned long remain = (open_duration * 1000UL - (millis() - openStart)) / 1000;
+    display.fillRect(122, 48, 46, 24, WHITE);
+    display.setCursor(122, 48);
+    display.print("Open:");
+    display.setCursor(122, 60);
+    display.print(remain);
+    display.refresh();
+  }
+
+  // Close feeder
+  _pendingEvent = "Closing";
+  _logData();
+  feederClose();
+
+  display.fillRect(122, 48, 46, 24, WHITE);
+  _updateDisplay();
+
+  // Lockout until mouse leaves sensor range
+  _requireClear = true;
+  _awayStart    = 0;
+}
+
 /**************************************************************************************************************************************************
                                                                                     Configuration Methods
 **************************************************************************************************************************************************/
@@ -745,10 +883,14 @@ void TumbleFeeder::_drawSettingsBase() {
   else if (mode == 1) display.print("Free");
   else if (mode == 2) display.print("FRxt");
   else if (mode == 3) display.print("FrTm");
+  else if (mode == 4) display.print("Prox");
 
   if (mode == 0 || mode == 2) {
     display.setCursor(12, 48);
     display.print("FR: ");
+  } else if (mode == 4) {
+    display.setCursor(12, 48);
+    display.print("ProxDur: ");
   }
   display.setCursor(12, 60);
   display.print("Device#: ");
@@ -793,12 +935,18 @@ void TumbleFeeder::_displayCurrentParams() {
   else if (mode == 1) display.print("Free");
   else if (mode == 2) display.print("FRxt");
   else if (mode == 3) display.print("FrTm");
+  else if (mode == 4) display.print("Prox");
 
   if (mode == 0 || mode == 2) {
     display.setCursor(12, 48);
     display.print("FR: ");
     display.setCursor(80, 48);
     display.print(FR);
+  } else if (mode == 4) {
+    display.setCursor(12, 48);
+    display.print("ProxDur: ");
+    display.setCursor(80, 48);
+    display.print(proxDuration);
   }
 
   display.setCursor(12, 60);
@@ -873,9 +1021,10 @@ void TumbleFeeder::_setFeedParadigm() {
   if      (mode == 1) selection = 0;
   else if (mode == 0) selection = 1;
   else if (mode == 2) selection = 2;
-  else                selection = 3;
+  else if (mode == 3) selection = 3;
+  else                selection = 4;  // mode == 4 (Prox)
 
-  const char* abbrevs[4] = {"Free", "FR", "FRxt", "FrTm"};
+  const char* abbrevs[5] = {"Free", "FR", "FRxt", "FrTm", "Prox"};
 
   _endstate = false;
 
@@ -907,15 +1056,17 @@ void TumbleFeeder::_setFeedParadigm() {
     // Red = cycle
     if (_redTouch == 0) {
       _beep();
-      selection = (selection + 1) % 4;
+      selection = (selection + 1) % 5;
       // Update mode immediately so FR row can refresh if needed
       int prevMode = mode;
       if      (selection == 0) mode = 1;
       else if (selection == 1) mode = 0;
       else if (selection == 2) mode = 2;
-      else                     mode = 3;
-      // Redraw base if FR row visibility changed
-      if ((prevMode == 0 || prevMode == 2) != (mode == 0 || mode == 2)) {
+      else if (selection == 3) mode = 3;
+      else                     mode = 4;
+      // Redraw base if FR/ProxDur row visibility changed
+      if ((prevMode == 0 || prevMode == 2) != (mode == 0 || mode == 2) ||
+          (prevMode == 4) != (mode == 4)) {
         _drawSettingsBase();
         display.fillRect(112, 0, 56, 128, WHITE);
         display.setCursor(134, 20); display.println("Back");
@@ -934,7 +1085,8 @@ void TumbleFeeder::_setFeedParadigm() {
       if      (selection == 0) mode = 1;
       else if (selection == 1) mode = 0;
       else if (selection == 2) mode = 2;
-      else                     mode = 3;
+      else if (selection == 3) mode = 3;
+      else                     mode = 4;
       _endstate = true;
       delay(100);
     }
@@ -966,6 +1118,8 @@ void TumbleFeeder::_setFeedParadigm() {
 
   if (mode == 1 || mode == 3) {
     _settingDeviceNum();
+  } else if (mode == 4) {
+    _settingProxDuration();
   } else {
     _settingFR();
   }
@@ -1011,6 +1165,48 @@ void TumbleFeeder::_settingFR() {
   }
   
   if (_endstate == false) _settingFR();
+}
+
+void TumbleFeeder::_settingProxDuration() {
+  _endstate = false;
+  _readButtons();
+  display.setCursor(80, 48);
+  display.print(proxDuration);
+  display.refresh();
+
+  if ((millis() - _menustart) > 250) {
+    display.fillRect(80, 48, 25, 12, WHITE);
+    display.refresh();
+    delay(5);
+    _menustart = millis();
+  }
+
+  if (_redTouch == 0) {
+    _beep();
+    proxDuration++;
+    if (proxDuration > 10) proxDuration = 1;
+    delay(200);
+  }
+
+  if (_blueTouch == 0) {
+    _beep();
+    display.fillRect(80, 48, 25, 12, WHITE);
+    display.refresh();
+    display.setCursor(80, 48);
+    display.print(proxDuration);
+    display.refresh();
+    _endstate = true;
+    delay(200);
+    _settingDeviceNum();
+  }
+
+  if (_greenTouch == 0) {
+    _beep();
+    _endstate = true;
+    _displayCurrentParams();
+  }
+
+  if (_endstate == false) _settingProxDuration();
 }
 
 void TumbleFeeder::_settingDeviceNum() {
@@ -1346,6 +1542,9 @@ void TumbleFeeder::_writeToSD() {
     logfile.println(FR);
   } else if (mode == 3) {
     logfile.println("FreeTerminate");
+  } else if (mode == 4) {
+    logfile.print("Prox");
+    logfile.println(proxDuration);
   }
 }
 
@@ -1418,6 +1617,9 @@ void TumbleFeeder::_createPos() {
       openpos = all.substring(index3 + 1, index4).toInt();
       closedpos = all.substring(index4 + 1, index5).toInt();
       FR = all.substring(index5 + 1).toInt();
+      int index6 = all.indexOf(" ", index5 + 1);
+      if (index6 != -1) proxDuration = all.substring(index6 + 1).toInt();
+      if (proxDuration < 1 || proxDuration > 10) proxDuration = 3;
     }
     configfile.close();
   }
@@ -1439,6 +1641,8 @@ void TumbleFeeder::_writeConfigFile() {
     configfile.print(closedpos);
     configfile.print(" ");
     configfile.print(FR);
+    configfile.print(" ");
+    configfile.print(proxDuration);
     configfile.flush();
     configfile.close();
   }

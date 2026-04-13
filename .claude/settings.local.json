@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"c:/Users/barrett.m/Documents/GitHub/CastleFeeder/src/TumbleFeeder.cpp\" \"c:/Users/barrett.m/Documents/Arduino/libraries/TumbleFeeder/src/TumbleFeeder.cpp\")",
+      "Bash(cp \"c:/Users/barrett.m/Documents/GitHub/CastleFeeder/src/TumbleFeeder.h\" \"c:/Users/barrett.m/Documents/Arduino/libraries/TumbleFeeder/src/TumbleFeeder.h\")"
+    ]
+  }
+}

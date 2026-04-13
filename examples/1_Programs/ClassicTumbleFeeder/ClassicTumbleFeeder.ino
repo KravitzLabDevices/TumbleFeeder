@@ -18,8 +18,14 @@
     The feeder stays open, but touching the feeder closes it
     for 60 seconds before it reopens.
 
+  Program 5 - Proximity Feeding
+    The feeder opens only when the mouse approaches and holds
+    near the proximity sensor for a configurable duration.
+    Requires a VL6180X sensor connected via I2C.
+
   After selecting a program, the settings menu lets you configure:
-  - FR value (1-10)
+  - FR value (1-10, FR modes only)
+  - Prox duration (1-10 seconds, Proximity mode only)
   - Device number (0-19)
   - Open duration (10-120 seconds)
   - Servo open and closed positions

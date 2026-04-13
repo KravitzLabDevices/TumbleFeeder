@@ -28,6 +28,7 @@
 #include <SdFat.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SharpMem.h>
+#include "Adafruit_VL6180X.h"
 
 // Pin definitions
 #define SERVO_PIN       10
@@ -81,7 +82,8 @@ class TumbleFeeder {
     
     // Public configuration variables
     int FR;
-    int mode;  // 0 = FR, 1 = Free feeding
+    int proxDuration;  // seconds mouse must hold near sensor (mode 4)
+    int mode;  // 0 = FR, 1 = Free feeding, 2 = FR Extend, 3 = Free Terminate, 4 = Proximity
     int deviceNumber;
     int closedpos;
     int openpos;
@@ -122,8 +124,14 @@ class TumbleFeeder {
     bool _blueTouch;
     void _readButtons();
     
-    // Free termination event tracking
+    // Free termination / proximity event tracking
     String _pendingEvent;
+
+    // Proximity mode (mode 4) state
+    Adafruit_VL6180X _vl;
+    bool _requireClear;
+    unsigned long _lastFeedEnd;
+    unsigned long _awayStart;
 
     // Session state
     bool _SessionStarted;
@@ -154,6 +162,7 @@ class TumbleFeeder {
     void _checkInputs();
     void _freeInputs();
     void _freeTerminateInputs();
+    void _proxInputs();
     void _readTouchPin(int pin, unsigned long &startTime, int &count, int &duration);
     
     // Display methods
@@ -173,6 +182,7 @@ class TumbleFeeder {
     void _settingOpenDuration();
     void _settingOpenPosition();
     void _settingClosedPosition();
+    void _settingProxDuration();
     
     // SD/Logging methods
     void _createFile();
