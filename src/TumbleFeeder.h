@@ -76,6 +76,7 @@ class TumbleFeeder {
     int leftPokeCount;
     int rightPokeCount;
     int FeederCount;
+    int proxOpenCount;  // proximity mode: number of successful openings
     int leftPokeDur;
     int rightPokeDur;
     int leftFeederDur;

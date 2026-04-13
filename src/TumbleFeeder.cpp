@@ -18,6 +18,7 @@ TumbleFeeder::TumbleFeeder() {
   leftPokeCount = 0;
   rightPokeCount = 0;
   FeederCount = 0;
+  proxOpenCount = 0;
   leftPokeDur = 0;
   rightPokeDur = 0;
   leftFeederDur = 0;
@@ -92,12 +93,10 @@ void TumbleFeeder::begin() {
   _createPos();  // Load saved positions and settings
   
   /********************************************************
-    Initialize Proximity Sensor (mode 4 only)
+    Initialize Proximity Sensor (always — needed if mode 4 is selected via menu)
   ********************************************************/
-  if (mode == 4) {
-    Wire.begin();
-    _vl.begin();
-  }
+  Wire.begin();
+  _vl.begin();
 
   /********************************************************
     Attach Interrupts
@@ -512,20 +511,6 @@ void TumbleFeeder::_proxInputs() {
 
   unsigned long startTime;
 
-  // Always check left/right pokes
-  if (_rightTouch) {
-    _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
-    _logData();
-    _rightTouch = false;
-    rightPokeDur = 0;
-  }
-  if (_leftTouch) {
-    _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
-    _logData();
-    _leftTouch = false;
-    leftPokeDur = 0;
-  }
-
   // Lockout: wait for mouse to fully leave before re-arming
   if (_requireClear) {
     uint8_t range  = _vl.readRange();
@@ -547,16 +532,20 @@ void TumbleFeeder::_proxInputs() {
   uint8_t status = _vl.readRangeStatus();
   if (status != VL6180X_ERROR_NONE || range >= ENTER_MM) return;
 
-  // Mouse detected — log event and start hold timer
+  // Mouse detected — beep, increment approach count, update display, log event
+  _beep();
+  leftPokeCount++;
+  _updateDisplay();
   _pendingEvent = "Detected";
   _logData();
 
+  // Hold timer
   unsigned long holdStart = millis();
   while (millis() - holdStart < (unsigned long)proxDuration * 1000UL) {
     uint8_t r = _vl.readRange();
     uint8_t s = _vl.readRangeStatus();
 
-    // Show hold countdown on display
+    // Show hold countdown in right column
     unsigned long remain = ((unsigned long)proxDuration * 1000UL - (millis() - holdStart)) / 1000 + 1;
     display.fillRect(122, 48, 46, 24, WHITE);
     display.setCursor(122, 48);
@@ -574,7 +563,9 @@ void TumbleFeeder::_proxInputs() {
     delay(100);
   }
 
-  // Hold requirement met — open feeder
+  // Hold requirement met — increment open count, update display, open feeder
+  proxOpenCount++;
+  _updateDisplay();
   _pendingEvent = "Opening";
   _logData();
   feederOpen();
@@ -588,20 +579,15 @@ void TumbleFeeder::_proxInputs() {
       _rightTouch = false;
       rightPokeDur = 0;
     }
-    if (_leftTouch) {
-      _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
-      _logData();
-      _leftTouch = false;
-      leftPokeDur = 0;
-    }
     if (_feedTouch) {
       _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+      _updateDisplay();
       _logData();
       _feedTouch = false;
       leftFeederDur = 0;
     }
 
-    // Countdown display
+    // Countdown display in right column
     unsigned long remain = (open_duration * 1000UL - (millis() - openStart)) / 1000;
     display.fillRect(122, 48, 46, 24, WHITE);
     display.setCursor(122, 48);
@@ -653,6 +639,7 @@ void TumbleFeeder::resetCounts() {
   leftPokeCount = 0;
   rightPokeCount = 0;
   FeederCount = 0;
+  proxOpenCount = 0;
   leftPokeDur = 0;
   rightPokeDur = 0;
   leftFeederDur = 0;
@@ -671,7 +658,7 @@ void TumbleFeeder::disableSleep() {
 }
 
 void TumbleFeeder::_goToSleep() {
-  if (_EnableSleep) {
+  if (_EnableSleep && mode != 4) {
     LowPower.sleep(5000);
   }
 }
@@ -695,7 +682,7 @@ void TumbleFeeder::_updateDisplay() {
     display.drawRect(5, 5, 104, 110, BLACK);
     display.drawRect(2, 2, 110, 116, BLACK);
     
-    // Mode and FR
+    // Mode and FR/ProxDur
     display.setCursor(12, 30);
     display.print("Mode: ");
     display.setCursor(80, 30);
@@ -703,36 +690,59 @@ void TumbleFeeder::_updateDisplay() {
     else if (mode == 1) display.print("Free");
     else if (mode == 2) display.print("FRxt");
     else if (mode == 3) display.print("FrTm");
+    else if (mode == 4) display.print("Prox");
 
     if (mode == 0 || mode == 2) {
       display.setCursor(12, 42);
       display.print("FR: ");
       display.setCursor(80, 42);
       display.print(FR);
+    } else if (mode == 4) {
+      display.setCursor(12, 42);
+      display.print("ProxDur: ");
+      display.setCursor(80, 42);
+      display.print(proxDuration);
     }
-    
+
     display.setCursor(12, 56);
     display.print("Device#: ");
     display.setCursor(80, 56);
     display.print(deviceNumber);
-    
+
     display.drawFastHLine(10, 70, 80, BLACK);
-    
-    // Counts
-    display.setCursor(12, 78);
-    display.print("Left: ");
-    display.setCursor(80, 78);
-    display.print(leftPokeCount);
-    
-    display.setCursor(12, 90);
-    display.print("Right: ");
-    display.setCursor(80, 90);
-    display.print(rightPokeCount);
-    
-    display.setCursor(12, 100);
-    display.print("Feed: ");
-    display.setCursor(80, 100);
-    display.print(FeederCount);
+
+    // Counts — relabeled for proximity mode
+    if (mode == 4) {
+      display.setCursor(12, 78);
+      display.print("Appr: ");
+      display.setCursor(80, 78);
+      display.print(leftPokeCount);
+
+      display.setCursor(12, 90);
+      display.print("Open: ");
+      display.setCursor(80, 90);
+      display.print(proxOpenCount);
+
+      display.setCursor(12, 100);
+      display.print("Feed: ");
+      display.setCursor(80, 100);
+      display.print(FeederCount);
+    } else {
+      display.setCursor(12, 78);
+      display.print("Left: ");
+      display.setCursor(80, 78);
+      display.print(leftPokeCount);
+
+      display.setCursor(12, 90);
+      display.print("Right: ");
+      display.setCursor(80, 90);
+      display.print(rightPokeCount);
+
+      display.setCursor(12, 100);
+      display.print("Feed: ");
+      display.setCursor(80, 100);
+      display.print(FeederCount);
+    }
     
     // Battery
     _displayBattery();
