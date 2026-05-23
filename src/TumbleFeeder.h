@@ -136,6 +136,8 @@ class TumbleFeeder {
 
     // Session state
     bool _SessionStarted;
+    bool _sdAvailable;
+    bool _fileCreated;
     unsigned long _menustart;
     bool _endstate;
     unsigned long _next_interval;
@@ -171,6 +173,7 @@ class TumbleFeeder {
     void _displayCurrentParams();
     void _displayMouse();
     void _displayBattery();
+    void _drawSDIcon(int x, int y);
     void _displaySDError();
     void _readBatteryLevel();
     
@@ -186,6 +189,8 @@ class TumbleFeeder {
     void _settingProxDuration();
     
     // SD/Logging methods
+    bool _initSD();
+    bool _reopenSD();
     void _createFile();
     void _createPos();
     void _logData();

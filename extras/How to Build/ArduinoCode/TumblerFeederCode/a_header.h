@@ -49,6 +49,7 @@ bool endstate = false;
 int FR=1;
 
 bool SessionStarted = false;
+bool sdAvailable   = false;
 const unsigned long display_interval = 100;
 unsigned long next_interval = 0;
 int closedpos = 150;
@@ -83,4 +84,4 @@ char daysOfTheWeek[7][12] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thurs
 ********************************************************/
 File logfile;  // Create file object
 File configfile;
-char filename[26];  // Array for file name data logged to named in setup
+char filename[26] = {0};  // Array for file name data logged to named in setup

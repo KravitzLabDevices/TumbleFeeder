@@ -48,7 +48,7 @@ void display_current_params() {
   display.setCursor(80, 96);
   display.print(closedpos);
 
-  DisplayBattery();
+  if (sdAvailable) DisplayBattery(); else DrawSDIcon(118, 4);
 
   DateTime now = rtc.now();
   display.setCursor(5, 128);
@@ -544,7 +544,7 @@ void update_display() {
   display.setCursor(80, 100);
   display.print(FeederCount);
 
-  DisplayBattery();
+  if (sdAvailable) DisplayBattery(); else DrawSDIcon(118, 4);
 
   DateTime now = rtc.now();
   display.setCursor(5, 128);
@@ -617,7 +617,23 @@ void DisplaySDError() {
   display.println("What am I?");
 
   display.refresh();
-  while (1);
+  delay(3000);
+  display.setTextSize(1);
+}
+
+/********************************************************
+  SD card fail icon — replaces battery icon when sdAvailable is false.
+  Draws a filled card body with a top-left notch and white "SD" label.
+********************************************************/
+void DrawSDIcon(int x, int y) {
+  display.fillRect(x, y, 47, 34, WHITE);       // clear battery + voltage area
+  display.fillRect(x, y, 38, 18, BLACK);        // card body
+  display.fillRect(x, y, 6, 6, WHITE);          // top-left notch cutout
+  display.drawLine(x, y + 6, x + 6, y, BLACK); // diagonal notch edge
+  display.setTextColor(WHITE);
+  display.setCursor(x + 12, y + 5);
+  display.print("SD");
+  display.setTextColor(BLACK);
 }
 
 /********************************************************

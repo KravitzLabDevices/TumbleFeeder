@@ -27,7 +27,7 @@
   - FR value (1-10, FR modes only)
   - Prox duration (1-10 seconds, Proximity mode only)
   - Device number (0-19)
-  - Open duration (10-120 seconds)
+  - Open duration (10-300 seconds)
   - Servo open and closed positions
 
   All settings are saved to SD card CONFIG.csv

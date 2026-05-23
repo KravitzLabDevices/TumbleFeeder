@@ -42,6 +42,7 @@ void startup() {
     Create file
   ********************************************************/
   SdFile::dateTimeCallback(dateTime);  //added this line so the files on the SD card have the correct date and time
+  initSD();
   CreateFile();
   CreatePos();
 }

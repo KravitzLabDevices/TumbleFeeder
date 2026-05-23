@@ -44,6 +44,9 @@ TumbleFeeder::TumbleFeeder() {
 
   // Session state
   _SessionStarted = false;
+  _sdAvailable = false;
+  _fileCreated = false;
+  memset(filename, 0, sizeof(filename));
   _endstate = false;
   _wake_counter = 0;
   _EnableSleep = true;
@@ -89,7 +92,7 @@ void TumbleFeeder::begin() {
     Initialize SD Card
   ********************************************************/
   SdFile::dateTimeCallback(_dateTime);
-  _createFile();
+  _initSD();
   _createPos();  // Load saved positions and settings
   
   /********************************************************
@@ -745,7 +748,7 @@ void TumbleFeeder::_updateDisplay() {
     }
     
     // Battery
-    _displayBattery();
+    if (_sdAvailable) _displayBattery(); else _drawSDIcon(118, 4);
     
     // Time
     DateTime now = rtc.now();
@@ -869,7 +872,19 @@ void TumbleFeeder::_displaySDError() {
   display.println("What am I?");
   
   display.refresh();
-  while (1);
+  delay(3000);
+  display.setTextSize(1);
+}
+
+void TumbleFeeder::_drawSDIcon(int x, int y) {
+  display.fillRect(x, y, 47, 34, WHITE);
+  display.fillRect(x, y, 38, 18, BLACK);
+  display.fillRect(x, y, 6, 6, WHITE);
+  display.drawLine(x, y + 6, x + 6, y, BLACK);
+  display.setTextColor(WHITE);
+  display.setCursor(x + 12, y + 5);
+  display.print("SD");
+  display.setTextColor(BLACK);
 }
 
 /**************************************************************************************************************************************************
@@ -1178,45 +1193,92 @@ void TumbleFeeder::_settingFR() {
 }
 
 void TumbleFeeder::_settingProxDuration() {
-  _endstate = false;
-  _readButtons();
-  display.setCursor(80, 48);
-  display.print(proxDuration);
+  // Button labels: Decrease / Next / Increase (like position menus)
+  display.fillRect(112, 0, 56, 128, WHITE);
+  display.setCursor(115, 20);
+  display.println("Decrease");
+  display.setCursor(116, 20);
+  display.println("Decrease");
+  display.setCursor(134, 60);
+  display.println("Next");
+  display.setCursor(135, 60);
+  display.println("Next");
+  display.setCursor(115, 100);
+  display.println("Increase");
+  display.setCursor(116, 100);
+  display.println("Increase");
   display.refresh();
 
-  if ((millis() - _menustart) > 250) {
-    display.fillRect(80, 48, 25, 12, WHITE);
-    display.refresh();
-    delay(5);
-    _menustart = millis();
-  }
+  _endstate = false;
 
-  if (_redTouch == 0) {
-    _beep();
-    proxDuration++;
-    if (proxDuration > 10) proxDuration = 1;
-    delay(200);
-  }
+  while (!_endstate) {
+    _readButtons();
 
-  if (_blueTouch == 0) {
-    _beep();
-    display.fillRect(80, 48, 25, 12, WHITE);
-    display.refresh();
     display.setCursor(80, 48);
     display.print(proxDuration);
     display.refresh();
-    _endstate = true;
-    delay(200);
-    _settingDeviceNum();
-  }
 
-  if (_greenTouch == 0) {
-    _beep();
-    _endstate = true;
-    _displayCurrentParams();
-  }
+    if ((millis() - _menustart) > 250) {
+      display.fillRect(80, 48, 35, 12, WHITE);
+      display.refresh();
+      delay(5);
+      _menustart = millis();
+    }
 
-  if (_endstate == false) _settingProxDuration();
+    // Red = Increase (1s steps, wraps 60 → 1); hold for fast scroll
+    if (_redTouch == 0) {
+      _beep();
+      proxDuration++;
+      if (proxDuration > 60) proxDuration = 1;
+      display.fillRect(80, 48, 35, 12, WHITE);
+      display.setCursor(80, 48);
+      display.print(proxDuration);
+      display.refresh();
+      delay(400);
+      while (digitalRead(RED_BUTTON) == LOW) {
+        proxDuration++;
+        if (proxDuration > 60) proxDuration = 1;
+        display.fillRect(80, 48, 35, 12, WHITE);
+        display.setCursor(80, 48);
+        display.print(proxDuration);
+        display.refresh();
+        delay(100);
+      }
+    }
+
+    // Blue = Next (confirm and advance to device number menu)
+    if (_blueTouch == 0) {
+      _beep();
+      display.fillRect(80, 48, 35, 12, WHITE);
+      display.setCursor(80, 48);
+      display.print(proxDuration);
+      display.refresh();
+      _endstate = true;
+      delay(200);
+      _settingDeviceNum();
+    }
+
+    // Green = Decrease (1s steps, wraps 1 → 60); hold for fast scroll
+    if (_greenTouch == 0) {
+      _beep();
+      if (proxDuration <= 1) proxDuration = 60; else proxDuration--;
+      display.fillRect(80, 48, 35, 12, WHITE);
+      display.setCursor(80, 48);
+      display.print(proxDuration);
+      display.refresh();
+      delay(400);
+      while (digitalRead(GREEN_BUTTON) == LOW) {
+        if (proxDuration <= 1) proxDuration = 60; else proxDuration--;
+        display.fillRect(80, 48, 35, 12, WHITE);
+        display.setCursor(80, 48);
+        display.print(proxDuration);
+        display.refresh();
+        delay(100);
+      }
+    }
+
+    delay(10);
+  }
 }
 
 void TumbleFeeder::_settingDeviceNum() {
@@ -1262,51 +1324,99 @@ void TumbleFeeder::_settingDeviceNum() {
 }
 
 void TumbleFeeder::_settingOpenDuration() {
-  _endstate = false;
-  _readButtons();
-  display.setCursor(80, 72);
-  display.print(open_duration);
+  // Button labels: Decrease / Next / Increase (like position menus)
+  display.fillRect(112, 0, 56, 128, WHITE);
+  display.setCursor(115, 20);
+  display.println("Decrease");
+  display.setCursor(116, 20);
+  display.println("Decrease");
+  display.setCursor(134, 60);
+  display.println("Next");
+  display.setCursor(135, 60);
+  display.println("Next");
+  display.setCursor(115, 100);
+  display.println("Increase");
+  display.setCursor(116, 100);
+  display.println("Increase");
   display.refresh();
-  
-  if ((millis() - _menustart) > 250) {
-    display.fillRect(80, 72, 25, 12, WHITE);
-    display.refresh();
-    delay(5);
-    _menustart = millis();
-  }
-  
-  if (_redTouch == 0) {
-    _beep();
-    open_duration += 10;
-    if (open_duration > 120) open_duration = 10;
-    delay(100);
-  }
-  
-  if (_blueTouch == 0) {
-    _beep();
+
+  _endstate = false;
+
+  while (!_endstate) {
+    _readButtons();
+
     display.setCursor(80, 72);
     display.print(open_duration);
     display.refresh();
-    
-    // Move servo to open position before entering menu
-    digitalWrite(LED_PIN, HIGH);
-    _servo.attach(SERVO_PIN);
-    _servo.write(openpos);
-    delay(300);
-    _servo.detach();
-    digitalWrite(LED_PIN, LOW);
-    
-    _endstate = true;
-    _settingOpenPosition();
+
+    if ((millis() - _menustart) > 250) {
+      display.fillRect(80, 72, 35, 12, WHITE);
+      display.refresh();
+      delay(5);
+      _menustart = millis();
+    }
+
+    // Red = Increase (10s steps, wraps 300 → 10); hold for fast scroll
+    if (_redTouch == 0) {
+      _beep();
+      open_duration += 10;
+      if (open_duration > 300) open_duration = 10;
+      display.fillRect(80, 72, 35, 12, WHITE);
+      display.setCursor(80, 72);
+      display.print(open_duration);
+      display.refresh();
+      delay(400);
+      while (digitalRead(RED_BUTTON) == LOW) {
+        open_duration += 10;
+        if (open_duration > 300) open_duration = 10;
+        display.fillRect(80, 72, 35, 12, WHITE);
+        display.setCursor(80, 72);
+        display.print(open_duration);
+        display.refresh();
+        delay(100);
+      }
+    }
+
+    // Blue = Next (confirm and advance to open position calibration)
+    if (_blueTouch == 0) {
+      _beep();
+      display.fillRect(80, 72, 35, 12, WHITE);
+      display.setCursor(80, 72);
+      display.print(open_duration);
+      display.refresh();
+
+      digitalWrite(LED_PIN, HIGH);
+      _servo.attach(SERVO_PIN);
+      _servo.write(openpos);
+      delay(300);
+      _servo.detach();
+      digitalWrite(LED_PIN, LOW);
+
+      _endstate = true;
+      _settingOpenPosition();
+    }
+
+    // Green = Decrease (10s steps, wraps 10 → 300); hold for fast scroll
+    if (_greenTouch == 0) {
+      _beep();
+      if (open_duration <= 10) open_duration = 300; else open_duration -= 10;
+      display.fillRect(80, 72, 35, 12, WHITE);
+      display.setCursor(80, 72);
+      display.print(open_duration);
+      display.refresh();
+      delay(400);
+      while (digitalRead(GREEN_BUTTON) == LOW) {
+        if (open_duration <= 10) open_duration = 300; else open_duration -= 10;
+        display.fillRect(80, 72, 35, 12, WHITE);
+        display.setCursor(80, 72);
+        display.print(open_duration);
+        display.refresh();
+        delay(100);
+      }
+    }
+
+    delay(10);
   }
-  
-  if (_greenTouch == 0) {
-    _beep();
-    _endstate = true;
-    _displayCurrentParams();
-  }
-  
-  if (_endstate == false) _settingOpenDuration();
 }
 
 void TumbleFeeder::_settingOpenPosition() {
@@ -1492,9 +1602,53 @@ void TumbleFeeder::_dateTime(uint16_t* date, uint16_t* time) {
   }
 }
 
+bool TumbleFeeder::_initSD() {
+  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
+    _sdAvailable = false;
+    return false;
+  }
+  _sdAvailable = true;
+  return true;
+}
+
+bool TumbleFeeder::_reopenSD() {
+  if (logfile) logfile.close();
+
+  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
+    _sdAvailable = false;
+    return false;
+  }
+
+  if (_fileCreated && filename[0] != '\0' && SD.exists(filename)) {
+    logfile = SD.open(filename, FILE_WRITE);  // FILE_WRITE = append in SdFat
+  } else {
+    strcpy(filename, "TUMBLER______________.CSV");
+    _getFilename(filename);
+    logfile = SD.open(filename, FILE_WRITE);
+    if (logfile) {
+      logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,Event,FeedParadigm");
+      logfile.flush();
+      _fileCreated = true;
+    }
+  }
+
+  _sdAvailable = (bool)logfile;
+  return _sdAvailable;
+}
+
 void TumbleFeeder::_logData() {
+  if (!_sdAvailable) {
+    if (!_reopenSD()) {
+      delay(100);
+      return;
+    }
+  }
   _writeToSD();
   logfile.flush();
+  if (logfile.getWriteError()) {
+    logfile.close();
+    _sdAvailable = false;
+  }
   delay(100);
 }
 
@@ -1559,26 +1713,25 @@ void TumbleFeeder::_writeToSD() {
 }
 
 void TumbleFeeder::_createFile() {
-  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
-    _error(2);
-    return;
-  }
-  
+  if (_fileCreated) return;
+  if (!_sdAvailable && !_initSD()) return;
+
   strcpy(filename, "TUMBLER______________.CSV");
   _getFilename(filename);
   Serial.print("Creating file: ");
   Serial.println(filename);
-  
+
   logfile = SD.open(filename, FILE_WRITE);
   if (!logfile) {
+    _sdAvailable = false;
     Serial.println("Failed to open file for writing!");
     return;
   }
-  
-  // Write header
+
   logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,Event,FeedParadigm");
   logfile.flush();
   Serial.println("File created and header written.");
+  _fileCreated = true;
 }
 
 void TumbleFeeder::_getFilename(char *fname) {
@@ -1602,12 +1755,8 @@ void TumbleFeeder::_getFilename(char *fname) {
 }
 
 void TumbleFeeder::_createPos() {
-  if (!SD.begin(cardSelect, SD_SCK_MHZ(4))) {
-    _error(2);
-    Serial.println("SD error in createPos");
-    return;
-  }
-  
+  if (!_sdAvailable) return;  // use defaults if no SD
+
   configfile = SD.open("CONFIG.csv", FILE_WRITE);
   configfile.close();
   configfile = SD.open("CONFIG.csv", FILE_READ);
@@ -1629,7 +1778,7 @@ void TumbleFeeder::_createPos() {
       FR = all.substring(index5 + 1).toInt();
       int index6 = all.indexOf(" ", index5 + 1);
       if (index6 != -1) proxDuration = all.substring(index6 + 1).toInt();
-      if (proxDuration < 1 || proxDuration > 10) proxDuration = 3;
+      if (proxDuration < 1 || proxDuration > 60) proxDuration = 3;
     }
     configfile.close();
   }
@@ -1637,6 +1786,7 @@ void TumbleFeeder::_createPos() {
 }
 
 void TumbleFeeder::_writeConfigFile() {
+  if (!_sdAvailable) return;
   configfile = SD.open("CONFIG.csv", FILE_WRITE);
   if (configfile) {
     configfile.rewind();
