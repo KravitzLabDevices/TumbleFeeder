@@ -241,6 +241,8 @@ void TumbleFeeder::_checkLeft() {
     
     // Check if FR condition is met
     if (FR > 0 && leftPokeCount % FR == 0) {
+      _pendingEvent = "Opening";
+      _logData();
       feederOpen();
       unsigned long openStart = millis();
       unsigned long feedingEnd   = openStart + (open_duration * 1000UL);
@@ -261,11 +263,30 @@ void TumbleFeeder::_checkLeft() {
           unsigned long startTime;
           _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
           extensionEnd = millis() + 30000UL;
+          _updateDisplay();
           _logData();
           _feedTouch = false;
           leftFeederDur = 0;
         } else {
           _checkFeeder();
+        }
+
+        if (_leftTouch) {
+          unsigned long startTime;
+          _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+          _updateDisplay();
+          _logData();
+          _leftTouch = false;
+          leftPokeDur = 0;
+        }
+
+        if (_rightTouch) {
+          unsigned long startTime;
+          _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+          _updateDisplay();
+          _logData();
+          _rightTouch = false;
+          rightPokeDur = 0;
         }
 
         // Display timers
@@ -290,6 +311,8 @@ void TumbleFeeder::_checkLeft() {
       }
 
       display.fillRect(122, 36, 46, 60, WHITE);
+      _pendingEvent = "Closing";
+      _logData();
       feederClose();
       _updateDisplay();
     }
@@ -563,6 +586,8 @@ void TumbleFeeder::_proxInputs() {
       _updateDisplay();
       return;
     }
+    _pendingEvent = "Detected";
+    _logData();
     delay(100);
   }
 
@@ -1626,7 +1651,7 @@ bool TumbleFeeder::_reopenSD() {
     _getFilename(filename);
     logfile = SD.open(filename, FILE_WRITE);
     if (logfile) {
-      logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,Event,FeedParadigm");
+      logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,FeedCount,FeedDur,Event,FeedParadigm");
       logfile.flush();
       _fileCreated = true;
     }
@@ -1728,7 +1753,7 @@ void TumbleFeeder::_createFile() {
     return;
   }
 
-  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,LeftFeedCount,LeftFeedDur,Event,FeedParadigm");
+  logfile.println("Timestamp,Temperature,ElapsedSecs,BatteryVoltage,DeviceNumber,LeftCount,LeftDur,RightCount,RightDur,FeedCount,FeedDur,Event,FeedParadigm");
   logfile.flush();
   Serial.println("File created and header written.");
   _fileCreated = true;
