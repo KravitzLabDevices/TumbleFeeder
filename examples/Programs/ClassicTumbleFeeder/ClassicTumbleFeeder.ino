@@ -1,6 +1,19 @@
 /*
   ClassicTumbleFeeder
 
+  ── BNC Output (optional) ───────────────────────────────────────────────────
+  To use BNC output, solder a BNC connector between Pin 11 (signal) and GND.
+
+  Set BNC_ENABLED to true and choose a BNC_MODE:
+    1 = Left touch only   — pin stays HIGH for the duration of the touch
+    2 = Right touch only  — pin stays HIGH for the duration of the touch
+    3 = Feed touch only   — pin stays HIGH for the duration of the touch
+    4 = All three         — fixed-duration pulse per touch type:
+                              Left  = 500 ms
+                              Right = 800 ms
+                              Feed  = 300 ms
+  ────────────────────────────────────────────────────────────────────────────
+
   At startup, use the buttons to select a program:
     Red  = cycle between programs
     Blue = confirm selection
@@ -36,9 +49,16 @@
 
 #include <TumbleFeeder.h>
 
+// ── BNC Output settings ──────────────────────────────────────────────────────
+bool BNC_ENABLED = false;
+int  BNC_MODE    = 4;     // 1=left, 2=right, 3=feed, 4=all three
+// ─────────────────────────────────────────────────────────────────────────────
+
 TumbleFeeder feeder;
 
 void setup() {
+  feeder.bncEnabled = BNC_ENABLED;
+  feeder.bncMode    = BNC_MODE;
   feeder.begin();
 }
 

@@ -58,7 +58,10 @@ TumbleFeeder::TumbleFeeder() {
 // Main initialization
 void TumbleFeeder::begin() {
   Serial.begin(9600);
-  
+
+  pinMode(BNC_PIN, OUTPUT);
+  digitalWrite(BNC_PIN, LOW);
+
   /********************************************************
     Initialize pins
   ********************************************************/
@@ -203,14 +206,26 @@ void TumbleFeeder::_wakeISR() {
 
 void TumbleFeeder::_handleLeftTouch() {
   _leftTouch = true;
+  if (bncEnabled && _SessionStarted && (bncMode == 1 || bncMode == 4)) {
+    digitalWrite(BNC_PIN, HIGH);
+    _bncStart = millis();
+  }
 }
 
 void TumbleFeeder::_handleRightTouch() {
   _rightTouch = true;
+  if (bncEnabled && _SessionStarted && (bncMode == 2 || bncMode == 4)) {
+    digitalWrite(BNC_PIN, HIGH);
+    _bncStart = millis();
+  }
 }
 
 void TumbleFeeder::_handleFeederTouch() {
   _feedTouch = true;
+  if (bncEnabled && _SessionStarted && (bncMode == 3 || bncMode == 4)) {
+    digitalWrite(BNC_PIN, HIGH);
+    _bncStart = millis();
+  }
 }
 
 // Helper method to read touch duration
@@ -223,12 +238,26 @@ void TumbleFeeder::_readTouchPin(int pin, unsigned long &startTime, int &count, 
   count++;
 }
 
+// BNC: pad to targetDurMs from ISR fire time, then go LOW
+// targetDurMs = 0 means go LOW immediately (touch-duration modes)
+void TumbleFeeder::_bncComplete(int targetDurMs) {
+  if (targetDurMs > 0) {
+    long remaining = (long)targetDurMs - (long)(millis() - _bncStart);
+    if (remaining > 0) delay((unsigned long)remaining);
+  }
+  digitalWrite(BNC_PIN, LOW);
+}
+
 // Check left poke with FR schedule
 void TumbleFeeder::_checkLeft() {
   if (_leftTouch) {
+    if (bncEnabled && bncMode == 4)
+      _bncComplete(BNC_DUR_LEFT);
     unsigned long startTime;
     _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
-    
+    if (bncEnabled && bncMode == 1)
+      _bncComplete(0);
+
     _logData();
     
     // Force immediate display update
@@ -260,8 +289,12 @@ void TumbleFeeder::_checkLeft() {
         }
 
         if (mode == 2 && _feedTouch) {
+          if (bncEnabled && bncMode == 4)
+            _bncComplete(BNC_DUR_FEED);
           unsigned long startTime;
           _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+          if (bncEnabled && bncMode == 3)
+            _bncComplete(0);
           extensionEnd = millis() + 30000UL;
           _updateDisplay();
           _logData();
@@ -272,8 +305,12 @@ void TumbleFeeder::_checkLeft() {
         }
 
         if (_leftTouch) {
+          if (bncEnabled && bncMode == 4)
+            _bncComplete(BNC_DUR_LEFT);
           unsigned long startTime;
           _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+          if (bncEnabled && bncMode == 1)
+            _bncComplete(0);
           _updateDisplay();
           _logData();
           _leftTouch = false;
@@ -281,8 +318,12 @@ void TumbleFeeder::_checkLeft() {
         }
 
         if (_rightTouch) {
+          if (bncEnabled && bncMode == 4)
+            _bncComplete(BNC_DUR_RIGHT);
           unsigned long startTime;
           _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+          if (bncEnabled && bncMode == 2)
+            _bncComplete(0);
           _updateDisplay();
           _logData();
           _rightTouch = false;
@@ -322,8 +363,12 @@ void TumbleFeeder::_checkLeft() {
 // Check right poke (no reward)
 void TumbleFeeder::_checkRight() {
   if (_rightTouch) {
+    if (bncEnabled && bncMode == 4)
+      _bncComplete(BNC_DUR_RIGHT);
     unsigned long startTime;
     _readTouchPin(RIGHT_TOUCH_PIN, startTime, rightPokeCount, rightPokeDur);
+    if (bncEnabled && bncMode == 2)
+      _bncComplete(0);
     
     _updateDisplay();
     _logData();
@@ -336,8 +381,12 @@ void TumbleFeeder::_checkRight() {
 // Check feeder access
 void TumbleFeeder::_checkFeeder() {
   if (_feedTouch) {
+    if (bncEnabled && bncMode == 4)
+      _bncComplete(BNC_DUR_FEED);
     unsigned long startTime;
     _readTouchPin(FEEDER_TOUCH_PIN, startTime, FeederCount, leftFeederDur);
+    if (bncEnabled && bncMode == 3)
+      _bncComplete(0);
     
     _updateDisplay();
     _logData();
@@ -361,12 +410,16 @@ void TumbleFeeder::_freeInputs() {
   
   // Left poke in free mode - no feeder opening
   if (_leftTouch) {
+    if (bncEnabled && bncMode == 4)
+      _bncComplete(BNC_DUR_LEFT);
     unsigned long startTime;
     _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
-    
+    if (bncEnabled && bncMode == 1)
+      _bncComplete(0);
+
     _updateDisplay();
     _logData();
-    
+
     _leftTouch = false;
     leftPokeDur = 0;
   }
@@ -378,8 +431,12 @@ void TumbleFeeder::_freeTerminateInputs() {
 
   // Left poke - log only, no reward
   if (_leftTouch) {
+    if (bncEnabled && bncMode == 4)
+      _bncComplete(BNC_DUR_LEFT);
     unsigned long startTime;
     _readTouchPin(LEFT_TOUCH_PIN, startTime, leftPokeCount, leftPokeDur);
+    if (bncEnabled && bncMode == 1)
+      _bncComplete(0);
     _updateDisplay();
     _logData();
     _leftTouch = false;
@@ -686,7 +743,7 @@ void TumbleFeeder::disableSleep() {
 }
 
 void TumbleFeeder::_goToSleep() {
-  if (_EnableSleep && mode != 4) {
+  if (_EnableSleep && mode != 4 && !bncEnabled) {
     LowPower.sleep(5000);
   }
 }

@@ -41,11 +41,17 @@
 #define SHARP_SS        6
 #define VBATPIN         A7
 #define cardSelect      4
+#define BNC_PIN         11
 
 // Additional button pins for menu
 #define RED_BUTTON      A3
 #define GREEN_BUTTON    1
 #define BLUE_BUTTON     A5
+
+// BNC pulse durations (ms) for mode 4 — all three
+#define BNC_DUR_LEFT   500
+#define BNC_DUR_RIGHT  800
+#define BNC_DUR_FEED   300
 
 #define BLACK 0
 #define WHITE 1
@@ -103,10 +109,14 @@ class TumbleFeeder {
     // Battery
     float measuredvbat;
     
+    // BNC output
+    bool bncEnabled = false;
+    int  bncMode    = 0;
+
     // Sleep control
     void enableSleep();
     void disableSleep();
-    
+
     // Reset counters
     void resetCounts();
     
@@ -203,6 +213,10 @@ class TumbleFeeder {
     // Stimuli/feedback
     void _blink(byte PIN, byte DELAY_MS, byte loops);
     void _beep();
+
+    // BNC helper
+    void _bncComplete(int targetDurMs);
+    volatile unsigned long _bncStart;
 };
 
 #endif
