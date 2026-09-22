@@ -142,7 +142,7 @@ void TumbleFeeder::run() {
     else if (mode == 1) {
       // Free feeding mode
       _freeInputs();
-      if (_wake_counter % 180 == 0) {
+      if (_wake_counter % 180 == 0 && !bncEnabled) {
         shakeFood();
       }
     }
@@ -153,7 +153,7 @@ void TumbleFeeder::run() {
     else if (mode == 3) {
       // Free Terminate mode
       _freeTerminateInputs();
-      if (_wake_counter % 180 == 0) {
+      if (_wake_counter % 180 == 0 && !bncEnabled) {
         shakeFood();
       }
     }
@@ -1001,8 +1001,10 @@ void TumbleFeeder::_drawSettingsBase() {
   }
   display.setCursor(12, 60);
   display.print("Device#: ");
-  display.setCursor(12, 72);
-  display.print("Sec open: ");
+  if (mode != 1 && mode != 3) {
+    display.setCursor(12, 72);
+    display.print("Sec open: ");
+  }
   display.setCursor(12, 84);
   display.print("Open Pos: ");
   display.setCursor(12, 96);
@@ -1061,16 +1063,18 @@ void TumbleFeeder::_displayCurrentParams() {
   display.setCursor(80, 60);
   display.print(deviceNumber);
 
-  display.setCursor(12, 72);
-  display.print("Sec open: ");
-  display.setCursor(80, 72);
-  display.print(open_duration);
-  
+  if (mode != 1 && mode != 3) {
+    display.setCursor(12, 72);
+    display.print("Sec open: ");
+    display.setCursor(80, 72);
+    display.print(open_duration);
+  }
+
   display.setCursor(12, 84);
   display.print("Open Pos: ");
   display.setCursor(80, 84);
   display.print(openpos);
-  
+
   display.setCursor(12, 96);
   display.print("Close Pos: ");
   display.setCursor(80, 96);
@@ -1393,15 +1397,19 @@ void TumbleFeeder::_settingDeviceNum() {
     display.refresh();
     _endstate = true;
     delay(200);
-    _settingOpenDuration();
+    if (mode == 1 || mode == 3) {
+      _settingOpenPosition();
+    } else {
+      _settingOpenDuration();
+    }
   }
-  
+
   if (_greenTouch == 0) {
     _beep();
     _endstate = true;
     _displayCurrentParams();
   }
-  
+
   if (_endstate == false) _settingDeviceNum();
 }
 
