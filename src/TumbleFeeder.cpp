@@ -1109,8 +1109,11 @@ void TumbleFeeder::_displayCurrentParams() {
     _SessionStarted = true;
     _updateDisplay();
     
-    // Don't move servo here - it's already in closed position from the menu
-    
+    // Open feeder at session start for free feeding modes
+    if (mode == 1 || mode == 3) {
+      feederOpen();
+    }
+
     // Create files
     _createFile();
     _writeConfigFile();
